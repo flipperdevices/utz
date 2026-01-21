@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ Small script to generate default zone whitelist from android and wikipedia info
 
 eV Quirk

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """ Library for parsing IANA timezone files and performing transformations
 
@@ -8,7 +8,6 @@ eV Quirk
 from collections import OrderedDict
 from datetime import date
 from functools import total_ordering
-from sets import Set
 
 CURRENT_YEAR = date.today().year
 MAX_FMT_LEN = 5
@@ -186,7 +185,7 @@ class Zone(Entry):
 
     def pack(self, rule_groups, rule_group_starts, formatters):
         if self.until is not None:
-            print self  # FIXME warnings
+            print(self)  # FIXME warnings
 
         _, h, m = parse_h_m(self.gmtoff)
 
@@ -262,7 +261,7 @@ class TimeZoneDatabase(object):
 
     def strip_historical(self):
         """ Strip out historical rules and zones """
-        rule_group_names = Set()
+        rule_group_names = set()
 
         filtered_rules = []
         for rule in self.rules:
@@ -387,7 +386,7 @@ class TimeZoneDatabase(object):
                 packed_zones[packed_zone] = [zone]
             else:
                 packed_zones[packed_zone].append(zone)
-            zone_indexes[zone.name] = packed_zones.keys().index(packed_zone)
+            zone_indexes[zone.name] = list(packed_zones.keys()).index(packed_zone)
 
         c_buf.append('const uzone_packed_t zone_defns[%d] = {' % len(packed_zones))
         for packed_zone, srcs in packed_zones.items():
