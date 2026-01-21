@@ -112,5 +112,5 @@ const uzone_packed_t zone_defns[46];
 #define NUM_ZONE_NAMES 101
 #define MAX_ZONE_NAME_LEN 17
 
-const unsigned char zone_names[960];
+const char zone_names[960];
 #endif /* _ZONES_H */
