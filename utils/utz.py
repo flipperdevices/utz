@@ -348,7 +348,7 @@ class TimeZoneDatabase(object):
                 idx = idx + 1
         c_buf[c_buf.index('PLACEHOLDER')] = 'const urule_packed_t zone_rules[%d] = {' % idx
         c_buf.append('};')
-        h_buf.append('const urule_packed_t zone_rules[%d];' % idx)
+        h_buf.append('extern const urule_packed_t zone_rules[%d];' % idx)
 
         return group_idx
 
@@ -377,7 +377,7 @@ class TimeZoneDatabase(object):
         c_buf.append('};')
         c_buf.append('')
         c_buf[c_buf.index('PLACEHOLDER')] = 'const char zone_abrevs[%d] = {' % total_char
-        h_buf.extend(['const char zone_abrevs[%d];' % total_char, ''])
+        h_buf.extend(['extern const char zone_abrevs[%d];' % total_char, ''])
         h_buf.extend(['#define MAX_ABREV_FORMATTER_LEN %d' % max_char, ''])
 
         for zone in sorted(self.zones):
@@ -394,7 +394,7 @@ class TimeZoneDatabase(object):
                 c_buf.append('// ' + src_zone._src)
             c_buf.append(packed_zone)
         c_buf.append('};')
-        h_buf.append('const uzone_packed_t zone_defns[%d];' % len(packed_zones))
+        h_buf.append('extern const uzone_packed_t zone_defns[%d];' % len(packed_zones))
 
         return zone_indexes
 
@@ -438,4 +438,4 @@ class TimeZoneDatabase(object):
         c_buf[c_buf.index('PLACEHOLDER')] = 'const char zone_names[%d] = {' % total_char
         c_buf.append('};')
         h_buf.extend(['', '#define NUM_ZONE_NAMES %d' % len(aliases), '#define MAX_ZONE_NAME_LEN %d' % max_char, ''])
-        h_buf.append('const char zone_names[%d];' % total_char)
+        h_buf.append('extern const char zone_names[%d];' % total_char)

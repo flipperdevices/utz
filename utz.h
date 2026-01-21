@@ -335,6 +335,6 @@ static uint16_t utz_k;
 extern const urule_packed_t zone_rules[];
 extern const uzone_packed_t zone_defns[];
 extern const char zone_abrevs[];
-extern const unsigned char zone_names[];
+extern const char zone_names[];
 
 #endif /* _UTZ_H */
