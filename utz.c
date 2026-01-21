@@ -121,6 +121,8 @@ int16_t udatetime_cmp(udatetime_t* dt1, udatetime_t* dt2) {
 }
 
 int32_t udatetime_unix(udatetime_t* dt) {
+  (void)dt;
+  return 0;
 }
 
 void unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t* rule_out) {
