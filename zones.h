@@ -1,7 +1,7 @@
 #ifndef _ZONES_H
 #define _ZONES_H
 
-const urule_packed_t zone_rules[50];
+const urule_packed_t zone_rules[39];
 const char zone_abrevs[209];
 
 #define MAX_ABREV_FORMATTER_LEN 7
@@ -31,7 +31,6 @@ const uzone_packed_t zone_defns[46];
 #define UTZ_CHENNAI             &zone_defns[ 24]
 #define UTZ_CHICAGO             &zone_defns[  6]
 #define UTZ_CHONGQING           &zone_defns[ 27]
-#define UTZ_DALLASFORT_WORTH    &zone_defns[  6]
 #define UTZ_DARWIN              &zone_defns[ 33]
 #define UTZ_DELHI               &zone_defns[ 24]
 #define UTZ_DENVER              &zone_defns[  7]
@@ -43,6 +42,7 @@ const uzone_packed_t zone_defns[46];
 #define UTZ_HAMBURG             &zone_defns[ 37]
 #define UTZ_HANGZHOU            &zone_defns[ 27]
 #define UTZ_HARARE              &zone_defns[  2]
+#define UTZ_HARBIN              &zone_defns[ 27]
 #define UTZ_HELSINKI            &zone_defns[ 38]
 #define UTZ_HOBART              &zone_defns[ 34]
 #define UTZ_HONG_KONG           &zone_defns[ 20]
@@ -91,6 +91,7 @@ const uzone_packed_t zone_defns[46];
 #define UTZ_SARAJEVO            &zone_defns[ 37]
 #define UTZ_SEOUL               &zone_defns[ 26]
 #define UTZ_SHANGHAI            &zone_defns[ 27]
+#define UTZ_SHANTOU             &zone_defns[ 27]
 #define UTZ_SHENYANG            &zone_defns[ 27]
 #define UTZ_SHENZHEN            &zone_defns[ 27]
 #define UTZ_ST_JOHNS            &zone_defns[ 17]
@@ -108,8 +109,8 @@ const uzone_packed_t zone_defns[46];
 #define UTZ_XIAN                &zone_defns[ 27]
 #define UTZ_ZHENGZHOU           &zone_defns[ 27]
 
-#define NUM_ZONE_NAMES 100
+#define NUM_ZONE_NAMES 101
 #define MAX_ZONE_NAME_LEN 17
 
-const unsigned char zone_names[961];
+const unsigned char zone_names[960];
 #endif /* _ZONES_H */

@@ -1,15 +1,12 @@
 #include "utz.h"
 
-const urule_packed_t zone_rules[50] = {
+const urule_packed_t zone_rules[39] = {
 {  8, 255, 7,  1,  1,  2, 0, 1,  4, 0}, // 	AN	2008	max	-	Apr	Sun>=1	2:00s	0	S
 {  8, 255, 7,  1,  1,  2, 0, 2, 10, 1}, // 	AN	2008	max	-	Oct	Sun>=1	2:00s	1:00	D
 {  8, 255, 7,  1,  1,  2, 0, 1,  4, 0}, // 	AS	2008	max	-	Apr	Sun>=1	2:00s	0	S
 {  8, 255, 7,  1,  1,  2, 0, 2, 10, 1}, // 	AS	2008	max	-	Oct	Sun>=1	2:00s	1:00	D
 {  8, 255, 7,  1,  1,  2, 0, 1,  4, 0}, // 	AT	2008	max	-	Apr	Sun>=1	2:00s	0	S
 {  1, 255, 7,  1,  1,  2, 0, 2, 10, 1}, // 	AT	2001	max	-	Oct	Sun>=1	2:00s	1:00	D
-{ 16,  22, 6, 14,  1, 23, 0, 0,  2, 0}, // 	Brazil	2016	2022	-	Feb	Sun>=15	0:00	0	-
-{ 23,  23, 6, 21,  1, 23, 0, 0,  2, 0}, // 	Brazil	2023	only	-	Feb	Sun>=22	0:00	0	-
-{ 24,  25, 6, 14,  1, 23, 0, 0,  2, 0}, // 	Brazil	2024	2025	-	Feb	Sun>=15	0:00	0	-
 { 26,  26, 6, 21,  1, 23, 0, 0,  2, 0}, // 	Brazil	2026	only	-	Feb	Sun>=22	0:00	0	-
 { 27,  33, 6, 14,  1, 23, 0, 0,  2, 0}, // 	Brazil	2027	2033	-	Feb	Sun>=15	0:00	0	-
 { 34,  34, 6, 21,  1, 23, 0, 0,  2, 0}, // 	Brazil	2034	only	-	Feb	Sun>=22	0:00	0	-
@@ -23,20 +20,12 @@ const urule_packed_t zone_rules[50] = {
 { 16, 255, 7,  9,  0,  4, 0, 1,  8, 1}, // 	Chile	2016	max	-	Aug	Sun>=9	4:00u	1:00	S
 {  0, 255, 7,  0,  0,  1, 0, 1,  3, 1}, // 	EU	1981	max	-	Mar	lastSun	 1:00u	1:00	S
 {  0, 255, 7,  0,  0,  1, 0, 0, 10, 0}, // 	EU	1996	max	-	Oct	lastSun	 1:00u	0	-
-{ 17,  19, 0, 22,  1,  0, 0, 2,  3, 1}, // 	Iran	2017	2019	-	Mar	22	0:00	1:00	D
-{ 20,  20, 0, 21,  1,  0, 0, 2,  3, 1}, // 	Iran	2020	only	-	Mar	21	0:00	1:00	D
-{ 21,  23, 0, 22,  1,  0, 0, 2,  3, 1}, // 	Iran	2021	2023	-	Mar	22	0:00	1:00	D
-{ 24,  24, 0, 21,  1,  0, 0, 2,  3, 1}, // 	Iran	2024	only	-	Mar	21	0:00	1:00	D
 { 25,  27, 0, 22,  1,  0, 0, 2,  3, 1}, // 	Iran	2025	2027	-	Mar	22	0:00	1:00	D
 { 28,  29, 0, 21,  1,  0, 0, 2,  3, 1}, // 	Iran	2028	2029	-	Mar	21	0:00	1:00	D
 { 30,  31, 0, 22,  1,  0, 0, 2,  3, 1}, // 	Iran	2030	2031	-	Mar	22	0:00	1:00	D
 { 32,  33, 0, 21,  1,  0, 0, 2,  3, 1}, // 	Iran	2032	2033	-	Mar	21	0:00	1:00	D
 { 34,  35, 0, 22,  1,  0, 0, 2,  3, 1}, // 	Iran	2034	2035	-	Mar	22	0:00	1:00	D
 { 36, 255, 0, 21,  1,  0, 0, 2,  3, 1}, // 	Iran	2036	max	-	Mar	21	0:00	1:00	D
-{ 17,  19, 0, 21,  1, 23, 0, 1,  9, 0}, // 	Iran	2017	2019	-	Sep	22	0:00	0	S
-{ 20,  20, 0, 20,  1, 23, 0, 1,  9, 0}, // 	Iran	2020	only	-	Sep	21	0:00	0	S
-{ 21,  23, 0, 21,  1, 23, 0, 1,  9, 0}, // 	Iran	2021	2023	-	Sep	22	0:00	0	S
-{ 24,  24, 0, 20,  1, 23, 0, 1,  9, 0}, // 	Iran	2024	only	-	Sep	21	0:00	0	S
 { 25,  27, 0, 21,  1, 23, 0, 1,  9, 0}, // 	Iran	2025	2027	-	Sep	22	0:00	0	S
 { 28,  29, 0, 20,  1, 23, 0, 1,  9, 0}, // 	Iran	2028	2029	-	Sep	21	0:00	0	S
 { 30,  31, 0, 21,  1, 23, 0, 1,  9, 0}, // 	Iran	2030	2031	-	Sep	22	0:00	0	S
@@ -109,34 +98,34 @@ const uzone_packed_t zone_defns[46] = {
 // Africa/Nairobi	3:00	-	EAT
 { 12,   0,   0,  13},
 // America/Anchorage	-9:00	US	AK%sT
-{-36,  46,   2,  17},
+{-36,  35,   2,  17},
 // America/Argentina/Buenos_Aires	-3:00	Arg	AR%sT
 {-12,   0,   0,  23},
 // America/Chicago	-6:00	US	C%sT
-{-24,  46,   2,  28},
+{-24,  35,   2,  28},
 // America/Denver	-7:00	US	M%sT
-{-28,  46,   2,  33},
+{-28,  35,   2,  33},
 // America/Halifax	-4:00	Canada	A%sT
-{-16,  16,   2,  38},
+{-16,  13,   2,  38},
 // America/Los_Angeles	-8:00	US	P%sT
 // America/Tijuana	-8:00	US	P%sT
-{-32,  46,   2,  43},
+{-32,  35,   2,  43},
 // America/Manaus	-4:00	-	AMT
 {-16,   0,   0,  48},
 // America/Mexico_City	-6:00	Mexico	C%sT
-{-24,  42,   2,  28},
+{-24,  31,   2,  28},
 // America/New_York	-5:00	US	E%sT
-{-20,  46,   2,  52},
+{-20,  35,   2,  52},
 // America/Phoenix	-7:00	-	MST
 {-28,   0,   0,  57},
 // America/Regina	-6:00	-	CST
 {-24,   0,   0,  61},
 // America/Santiago	-4:00	Chile	CL%sT
-{-16,  18,   2,  65},
+{-16,  15,   2,  65},
 // America/Sao_Paulo	-3:00	Brazil	BR%sT
-{-12,   6,  10,  71},
+{-12,   6,   7,  71},
 // America/St_Johns	-3:30	Canada	N%sT
-{-10,  16,   2,  77},
+{-10,  13,   2,  77},
 // Asia/Bangkok	7:00	-	ICT
 { 28,   0,   0,  82},
 // Asia/Dubai	4:00	-	GST
@@ -144,7 +133,7 @@ const uzone_packed_t zone_defns[46] = {
 // Asia/Hong_Kong	8:00	HK	HK%sT
 { 32,   0,   0,  90},
 // Asia/Jerusalem	2:00	Zion	I%sT
-{  8,  48,   2,  95},
+{  8,  37,   2,  95},
 // Asia/Karachi	5:00	Pakistan	PK%sT
 { 20,   0,   0, 100},
 // Asia/Kathmandu	5:45	-	NPT
@@ -159,7 +148,7 @@ const uzone_packed_t zone_defns[46] = {
 // Asia/Taipei	8:00	Taiwan	C%sT
 { 32,   0,   0,  61},
 // Asia/Tehran	3:30	Iran	IR%sT
-{ 14,  22,  20, 121},
+{ 14,  19,  12, 121},
 // Asia/Tokyo	9:00	Japan	J%sT
 { 36,   0,   0, 127},
 // Asia/Yangon	6:30	-	MMT
@@ -180,17 +169,17 @@ const uzone_packed_t zone_defns[46] = {
 // Europe/Berlin	1:00	EU	CE%sT
 // Europe/Madrid	1:00	EU	CE%sT
 // Europe/Rome	1:00	EU	CE%sT
-{  4,  20,   2, 162},
+{  4,  17,   2, 162},
 // Europe/Helsinki	2:00	EU	EE%sT
-{  8,  20,   2, 168},
+{  8,  17,   2, 168},
 // Europe/Istanbul	3:00	-	+03
 { 12,   0,   0, 174},
 // Europe/London	0:00	EU	GMT/BST
-{  0,  20,   2, 178},
+{  0,  17,   2, 178},
 // Europe/Moscow	3:00	-	MSK
 { 12,   0,   0, 186},
 // Pacific/Auckland	12:00	NZ	NZ%sT
-{ 48,  44,   2, 190},
+{ 48,  33,   2, 190},
 // Pacific/Guam	10:00	-	ChST
 { 40,   0,   0, 196},
 // Pacific/Honolulu	-10:00	-	HST
@@ -199,7 +188,7 @@ const uzone_packed_t zone_defns[46] = {
 {-44,   0,   0, 205},
 };
 
-const unsigned char zone_names[961] = {
+const unsigned char zone_names[960] = {
                                             'A','d','e','l','a','i','d','e','\0',  31, // Adelaide
                                         'A','h','m','e','d','a','b','a','d','\0',  24, // Ahmedabad
                                         'A','n','c','h','o','r','a','g','e','\0',   4, // Anchorage
@@ -224,7 +213,6 @@ const unsigned char zone_names[961] = {
                                                 'C','h','e','n','n','a','i','\0',  24, // Chennai
                                                 'C','h','i','c','a','g','o','\0',   6, // Chicago
                                         'C','h','o','n','g','q','i','n','g','\0',  27, // Chongqing
-            'D','a','l','l','a','s','F','o','r','t',' ','W','o','r','t','h','\0',   6, // DallasFort Worth
                                                     'D','a','r','w','i','n','\0',  33, // Darwin
                                                         'D','e','l','h','i','\0',  24, // Delhi
                                                     'D','e','n','v','e','r','\0',   7, // Denver
@@ -236,6 +224,7 @@ const unsigned char zone_names[961] = {
                                                 'H','a','m','b','u','r','g','\0',  37, // Hamburg
                                             'H','a','n','g','z','h','o','u','\0',  27, // Hangzhou
                                                     'H','a','r','a','r','e','\0',   2, // Harare
+                                                    'H','a','r','b','i','n','\0',  27, // Harbin
                                             'H','e','l','s','i','n','k','i','\0',  38, // Helsinki
                                                     'H','o','b','a','r','t','\0',  34, // Hobart
                                         'H','o','n','g',' ','K','o','n','g','\0',  20, // Hong Kong
@@ -284,6 +273,7 @@ const unsigned char zone_names[961] = {
                                             'S','a','r','a','j','e','v','o','\0',  37, // Sarajevo
                                                         'S','e','o','u','l','\0',  26, // Seoul
                                             'S','h','a','n','g','h','a','i','\0',  27, // Shanghai
+                                                'S','h','a','n','t','o','u','\0',  27, // Shantou
                                             'S','h','e','n','y','a','n','g','\0',  27, // Shenyang
                                             'S','h','e','n','z','h','e','n','\0',  27, // Shenzhen
                                             'S','t',' ','J','o','h','n','s','\0',  17, // St Johns
