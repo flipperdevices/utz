@@ -213,6 +213,62 @@ static void test_new_york(void) {
 	TEST(offset.minutes == 0);
 }
 
+static void test_auckland(void) {
+	uzone_t zone;
+	// Look up by name
+	TEST(utz_get_zone_by_name("Auckland", &zone));
+	TEST(strcmp(zone.name, "Auckland") == 0);
+	TEST(zone.rules_len == 2);
+	TEST(strcmp(zone.abrev_formatter, "NZ%cT") == 0);
+
+	// Summer time
+	udatetime_t dt = {
+		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	uoffset_t offset;
+	char c = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(c == 'D');
+	TEST(offset.hours == 13);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right before switching to winter time
+	// Switch at 3:00 local time - 14:00 UTC previous day
+	dt.date = utz_date_init(UYEAR_FROM_YEAR(2026), 4, 4);
+	dt.time.hour = 13;
+	c = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(c == 'D');
+	TEST(offset.hours == 13);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right after switching from summer time
+	dt.time.hour = 14;
+	c = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(c == 'S');
+	TEST(offset.hours == 12);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right before switching to summer time
+	// Switch at 2:00 local time - 14:00 UTC previous day
+	dt.date = utz_date_init(UYEAR_FROM_YEAR(2026), 9, 26);
+	dt.time.hour = 13;
+	c = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(c == 'S');
+	TEST(offset.hours == 12);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right after switching from winter time
+	dt.time.hour = 14;
+	c = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(c == 'D');
+	TEST(offset.hours == 13);
+	TEST(offset.minutes == 0);
+}
+
 static void test_datetime_adjust(void) {
 	uoffset_t off;
 	udatetime_t dt, res;
@@ -341,9 +397,10 @@ int main(void) {
 	test_dayofweek();
 	test_cmp();
 	test_offset();
+	test_datetime_adjust();
 	test_berlin();
 	test_st_johns();
 	test_new_york();
-	test_datetime_adjust();
+	test_auckland();
 	return 0;
 }
