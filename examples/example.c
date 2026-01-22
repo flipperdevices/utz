@@ -20,9 +20,9 @@ void main() {
   dt.time.second = 0;
 
   uzone_t active_zone;
-  get_zone_by_name("San Francisco", &active_zone);
+  utz_get_zone_by_name("San Francisco", &active_zone);
   uoffset_t offset;
-  char c = get_current_offset(&active_zone, &dt, &offset);
+  char c = utz_get_current_offset(&active_zone, &dt, &offset);
   printf("%s, current offset: %d.%d\n", active_zone.name, offset.hours, offset.minutes / 60);
   printf(active_zone.abrev_formatter, c);
   printf("\n");

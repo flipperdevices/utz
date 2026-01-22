@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-I. -std=gnu2x
 DEPS = zones.h
 
 UTZ_DATA_DIR = vendor/tzdata
@@ -40,4 +40,4 @@ test: test/test
 	./test/test
 
 test/test: utz.o zones.o test/test.o
-	$(CC) -o $@ $^ -I.
+	$(CC) $(CFLAGS) -o $@ $^ -I.

@@ -324,7 +324,7 @@ class TimeZoneDatabase(object):
         self.rules = rules
 
         h_filename = h_filename.upper().replace('.', '_')
-        h_buf = ['#ifndef _%s' % h_filename, '#define _%s' % h_filename, '']
+        h_buf = ['#ifndef _%s' % h_filename, '#define _%s' % h_filename, '', '#include "types.h"', '']
         c_buf = ['#include "utz.h"', '']
         rule_groups = self.rule_groups()
         rule_group_starts = self._pack_rules(rule_groups, c_buf, h_buf)
@@ -346,9 +346,9 @@ class TimeZoneDatabase(object):
             for rule in sorted(group, key=lambda x: MONTHS.index(x._in)):
                 c_buf.append(rule.pack())
                 idx = idx + 1
-        c_buf[c_buf.index('PLACEHOLDER')] = 'const urule_packed_t zone_rules[%d] = {' % idx
+        c_buf[c_buf.index('PLACEHOLDER')] = 'const urule_packed_t utz_zone_rules[%d] = {' % idx
         c_buf.append('};')
-        h_buf.append('extern const urule_packed_t zone_rules[%d];' % idx)
+        h_buf.append('extern const urule_packed_t utz_zone_rules[%d];' % idx)
 
         return group_idx
 
@@ -376,8 +376,8 @@ class TimeZoneDatabase(object):
 
         c_buf.append('};')
         c_buf.append('')
-        c_buf[c_buf.index('PLACEHOLDER')] = 'const char zone_abrevs[%d] = {' % total_char
-        h_buf.extend(['extern const char zone_abrevs[%d];' % total_char, ''])
+        c_buf[c_buf.index('PLACEHOLDER')] = 'const char utz_zone_abrevs[%d] = {' % total_char
+        h_buf.extend(['extern const char utz_zone_abrevs[%d];' % total_char, ''])
         h_buf.extend(['#define MAX_ABREV_FORMATTER_LEN %d' % max_char, ''])
 
         for zone in sorted(self.zones):
@@ -388,13 +388,13 @@ class TimeZoneDatabase(object):
                 packed_zones[packed_zone].append(zone)
             zone_indexes[zone.name] = list(packed_zones.keys()).index(packed_zone)
 
-        c_buf.append('const uzone_packed_t zone_defns[%d] = {' % len(packed_zones))
+        c_buf.append('const uzone_packed_t utz_zone_defns[%d] = {' % len(packed_zones))
         for packed_zone, srcs in packed_zones.items():
             for src_zone in srcs:
                 c_buf.append('// ' + src_zone._src)
             c_buf.append(packed_zone)
         c_buf.append('};')
-        h_buf.append('extern const uzone_packed_t zone_defns[%d];' % len(packed_zones))
+        h_buf.append('extern const uzone_packed_t utz_zone_defns[%d];' % len(packed_zones))
 
         return zone_indexes
 
@@ -423,7 +423,7 @@ class TimeZoneDatabase(object):
             name = name.replace("-", '')
             name = name.replace(".", '')
             name = name.replace(",", '')
-            h_buf.append(("#define UTZ_" + name.upper() + ' '*(max_len+4-len(name)) + '&zone_defns[%3d]') % index)
+            h_buf.append(("#define UTZ_" + name.upper() + ' '*(max_len+4-len(name)) + '&utz_zone_defns[%3d]') % index)
             name = orig_name.replace('_', ' ')
             for c in name:
                 if c == "'":
@@ -435,7 +435,7 @@ class TimeZoneDatabase(object):
             if len(char) > max_char:
                 max_char = len(char)
             c_buf.append(("%" + str(max_len*5) + "s, %3d, // %s") % ( "'%s'" % "','".join(char), index, name))
-        c_buf[c_buf.index('PLACEHOLDER')] = 'const char zone_names[%d] = {' % total_char
+        c_buf[c_buf.index('PLACEHOLDER')] = 'const char utz_zone_names[%d] = {' % total_char
         c_buf.append('};')
-        h_buf.extend(['', '#define NUM_ZONE_NAMES %d' % len(aliases), '#define MAX_ZONE_NAME_LEN %d' % max_char, ''])
-        h_buf.append('extern const char zone_names[%d];' % total_char)
+        h_buf.extend(['', '#define UTZ_NUM_ZONE_NAMES %d' % len(aliases), '#define UTZ_MAX_ZONE_NAME_LEN %d' % max_char, ''])
+        h_buf.append('extern const char utz_zone_names[%d];' % total_char)
