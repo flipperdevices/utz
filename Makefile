@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I. -std=gnu2x
+CFLAGS=-I. -std=gnu2x -Wall -Wextra -Werror
 DEPS = zones.h
 
 UTZ_DATA_DIR = vendor/tzdata

@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "utz.h"
 #include "zones.h"
@@ -49,6 +50,45 @@ static const char months_of_year[] = {
 'D','e','c','e','m','b','e','r','\0',
 };
 #endif
+
+/** @brief unpack rule
+ *
+ *  @param rule_in pointer to packed rule
+ *  @param cur_year year: 1 <= y <= 255 (2001 - 2255)
+ *  @param rule_out pointer for the output unpacked rule
+ *  @return void
+ */
+static void unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t* rule_out);
+
+/** @brief unpack rules that are active in the current year
+ *
+ *  Note this assumes no two rules are active on the same day
+ *
+ *  @param rules_in pointer to packed rules
+ *  @param num_rules the number of rules in the array
+ *  @param cur_year year: 1 <= y <= 255 (2001 - 2255)
+ *  @param rules_out pointer for the output unpacked rules
+ *  @return void
+ */
+static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint8_t cur_year, urule_t* rules_out);
+
+/** @brief get the rule that applies at datetime
+ *
+ *  @param zone timezone which rules apply to
+ *  @param rules pointer to rules
+ *  @param datetime the datetime to check rules for
+ *  @return a pointer the the rule that applies
+ */
+static const urule_t* get_active_rule(const uzone_t *zone, const urule_t* rules, const udatetime_t* datetime);
+
+/** @brief unpack timezone
+ *
+ *  @param name the name of the timezone
+ *  @param zone_in pointer to input packed zone
+ *  @param zone_in pointer to output unpacked zone
+ *  @return void
+ */
+static void unpack_zone(const uzone_packed_t* zone_in, const char* name, uzone_t* zone_out);
 
 static const uzone_packed_t* last_zone;
 static uint8_t last_year;
@@ -110,40 +150,97 @@ int utz_udatetime_cmp(const udatetime_t* dt1, const udatetime_t* dt2) {
   return 0;
 }
 
-void utz_unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t* rule_out) {
+static void udate_dec(udate_t *date) {
+  date->dayofweek -= 1;
+  if (date->dayofweek == 0) {
+    date->dayofweek = 7;
+  }
+  date->dayofmonth -= 1;
+  if (date->dayofmonth == 0) {
+    if (date->month == 1) {
+      date->year -= 1;
+      date->month = 12;
+      date->dayofmonth = 31;
+    } else {
+      date->month -= 1;
+      date->dayofmonth = days_in_month(date->year, date->month);
+    }
+  }
+}
+
+static void udate_inc(udate_t *date) {
+  date->dayofweek += 1;
+  if (date->dayofweek == 8) {
+    date->dayofweek = 1;
+  }
+  date->dayofmonth += 1;
+  if (date->dayofmonth == days_in_month(date->year, date->month) + 1) {
+    date->dayofmonth = 1;
+    date->month += 1;
+    if (date->month == 13) {
+      date->month = 1;
+      date->year += 1;
+    }
+  }
+}
+
+udatetime_t utz_udatetime_add(const udatetime_t* dt, const uoffset_t *offset) {
+  udatetime_t r = *dt;
+
+  int8_t h = dt->time.hour; // 0..23
+  uint8_t m = dt->time.minute; // 0..59
+
+  m += offset->minutes; // can't overflow, offset->minutes is guaranteed to be 0..59
+  if (m >= 60) {
+    m -= 60;
+    h += 1;
+  }
+  h += offset->hours; // can't overflow, offset->hours is guaranteed to be -12..12
+  if (h >= 24) {
+    h -= 24;
+    udate_inc(&r.date);
+  } else if (h < 0) {
+    h += 24;
+    udate_dec(&r.date);
+  }
+  r.time.hour = (uint8_t)h;
+  r.time.minute = m;
+  return r;
+}
+
+static void unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t* rule_out) {
   static const char letter_lut[3] = {'-', 'S', 'D'};
 
   udayofweek_t dayofweek_of_first_dayofmonth;
   udayofweek_t first_dayofweek;
   udayofweek_t dayofweek_of_dayofmonth;
 
-  rule_out->date.year = cur_year;
-  rule_out->date.month = 0;
-  rule_out->date.month += rule_in->in_month;
+  rule_out->datetime.date.year = cur_year;
+  rule_out->datetime.date.month = 0;
+  rule_out->datetime.date.month += rule_in->in_month;
 
   if (rule_in->on_dayofweek == 0) { // format is DOM e.g. 22
-    rule_out->date.dayofmonth = rule_in->on_dayofmonth;
+    rule_out->datetime.date.dayofmonth = rule_in->on_dayofmonth;
   } else if (rule_in->on_dayofmonth == 0) { // format is lastDOW e.g. lastSun
     dayofweek_of_first_dayofmonth = utz_dayofweek(cur_year, rule_in->in_month, 1);
     first_dayofweek = utz_next_dayofweek_offset(dayofweek_of_first_dayofmonth, rule_in->on_dayofweek);
-    rule_out->date.dayofmonth = 1 + (7*3) + first_dayofweek;
-    if (rule_out->date.dayofmonth + 7 <= days_in_month(cur_year, rule_in->in_month)) {
-      rule_out->date.dayofmonth += 7;
+    rule_out->datetime.date.dayofmonth = 1 + (7*3) + first_dayofweek;
+    if (rule_out->datetime.date.dayofmonth + 7 <= days_in_month(cur_year, rule_in->in_month)) {
+      rule_out->datetime.date.dayofmonth += 7;
     }
   } else { // format is DOW >= DOM e.g. Sun>=22
     dayofweek_of_dayofmonth = utz_dayofweek(cur_year, rule_in->in_month, rule_in->on_dayofmonth);
-    rule_out->date.dayofmonth = rule_in->on_dayofmonth + utz_next_dayofweek_offset(
+    rule_out->datetime.date.dayofmonth = rule_in->on_dayofmonth + utz_next_dayofweek_offset(
       dayofweek_of_dayofmonth, 
       rule_in->on_dayofweek
     );
   }
 
-  rule_out->time.hour = 0;
-  rule_out->time.hour += rule_in->at_hours;
-  rule_out->time.minute = 0;
-  rule_out->time.minute += rule_in->at_inc_minutes * OFFSET_INCREMENT;
-  rule_out->is_local_time = 0;
-  rule_out->is_local_time += rule_in->at_is_local_time;
+  rule_out->datetime.time.hour = 0;
+  rule_out->datetime.time.hour += rule_in->at_hours;
+  rule_out->datetime.time.minute = 0;
+  rule_out->datetime.time.minute += rule_in->at_inc_minutes * OFFSET_INCREMENT;
+  rule_out->is_local_time = rule_in->at_is_local_time != 0;
 
   rule_out->letter = letter_lut[rule_in->letter];
 
@@ -151,7 +248,7 @@ void utz_unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t* r
   rule_out->offset_hours += rule_in->offset_hours;
 }
 
-void utz_unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint8_t cur_year, urule_t* rules_out) {
+static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint8_t cur_year, urule_t* rules_out) {
 #ifndef UTZ_GLOBAL_COUNTERS
   uint8_t utz_i;
 #endif
@@ -166,27 +263,40 @@ void utz_unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint8_t
       if (rules_in[utz_i].in_month > rules_in[l].in_month) {
         l = utz_i;
       }
-      utz_unpack_rule(&rules_in[utz_i], cur_year, &rules_out[current_rule_count++]);
+      unpack_rule(&rules_in[utz_i], cur_year, &rules_out[current_rule_count++]);
     }
   }
 
-  utz_unpack_rule(&rules_in[l], cur_year, rules_out);
+  unpack_rule(&rules_in[l], cur_year, rules_out);
   // We override the "last" rule time of effect to be the start of the current year
-  rules_out->date.year = cur_year;
-  rules_out->date.month = 1;
-  rules_out->date.dayofmonth = 1;
-  for (utz_i = 0; utz_i < sizeof(utime_t); utz_i++) {
-    ((char*)&rules_out->time)[utz_i] = 0;
-  }
+  rules_out->datetime.date.year = cur_year;
+  rules_out->datetime.date.month = 1;
+  rules_out->datetime.date.dayofmonth = 1;
+  memset(&rules_out->datetime.time, 0, sizeof(utime_t));
 }
 
-const urule_t* utz_get_active_rule(const urule_t* rules, const udatetime_t* datetime) {
+static const urule_t* get_active_rule(const uzone_t* zone, const urule_t* rules, const udatetime_t* datetime) {
 #ifndef UTZ_GLOBAL_COUNTERS
   int8_t utz_i = 0;
 #endif
+  // Rules are guaranteed to have year set to be equal to datetime's year (done in unpack_rule).
   for (utz_i = 1; utz_i < MAX_CURRENT_RULES; utz_i++) {
-    if (!RULE_IS_VALID(rules[utz_i]) || utz_udatetime_cmp(datetime, &(rules[utz_i].datetime)) < 0) {
-      return &rules[utz_i-1];
+    const urule_t *rule = rules + utz_i;
+    if (!RULE_IS_VALID(*rule)) {
+      return rule - 1;
+    }
+    if (!rule->is_local_time) {
+      // Rule start is UTC time, simply comprare
+      if (utz_udatetime_cmp(datetime, &rule->datetime) < 0) {
+        return rule - 1;
+      }
+    } else {
+      // Rule start is local time of the zone, regardless of the rule
+      uoffset_t offset = zone->offset;
+      udatetime_t local = utz_udatetime_add(datetime, &offset);
+      if (utz_udatetime_cmp(&local, &rule->datetime) < 0) {
+        return rule - 1;
+      }
     }
   }
   return &rules[MAX_CURRENT_RULES-1];
@@ -194,24 +304,29 @@ const urule_t* utz_get_active_rule(const urule_t* rules, const udatetime_t* date
 
 char utz_get_current_offset(const uzone_t* zone, const udatetime_t* datetime, uoffset_t* offset) {
   if (last_zone != zone->src || last_year != datetime->date.year) {
-    utz_unpack_rules(zone->rules, zone->rules_len, datetime->date.year, cached_rules);
+    unpack_rules(zone->rules, zone->rules_len, datetime->date.year, cached_rules);
     last_zone = zone->src;
     last_year = datetime->date.year;
   }
 
   offset->minutes = zone->offset.minutes;
   offset->hours = zone->offset.hours;
-  const urule_t *rule = utz_get_active_rule(cached_rules, datetime);
+  const urule_t *rule = get_active_rule(zone, cached_rules, datetime);
   offset->hours += rule->offset_hours;
   return rule->letter;
 }
 
-void utz_unpack_zone(const uzone_packed_t* zone_in, const char* name, uzone_t* zone_out) {
+static void unpack_zone(const uzone_packed_t* zone_in, const char* name, uzone_t* zone_out) {
   zone_out->src = zone_in;
   zone_out->name = name;
 
-  zone_out->offset.minutes = (zone_in->offset_inc_minutes % (60 / OFFSET_INCREMENT)) * OFFSET_INCREMENT;
+  int8_t minutes = (zone_in->offset_inc_minutes % (60 / OFFSET_INCREMENT)) * OFFSET_INCREMENT;
   zone_out->offset.hours = zone_in->offset_inc_minutes / (60 / OFFSET_INCREMENT);
+  if (minutes < 0) {
+    minutes += 60;
+    zone_out->offset.hours -= 1;
+  }
+  zone_out->offset.minutes = minutes;
   zone_out->rules = &(utz_zone_rules[zone_in->rules_idx]);
   zone_out->rules_len = zone_in->rules_len;
 
@@ -231,13 +346,6 @@ static uint8_t advance_and_get_defn_idx(const char** list) {
   return **list;
 }
 
-const char* get_index(const char* list, uint8_t i) {
-  while(i-->0) {
-    advance_and_get_defn_idx(&list);
-  }
-  return list;
-}
-
 bool utz_get_zone_by_name(const char* name, uzone_t* zone_out) {
 #ifndef UTZ_GLOBAL_COUNTERS
   uint16_t utz_k;
@@ -245,7 +353,7 @@ bool utz_get_zone_by_name(const char* name, uzone_t* zone_out) {
   const char* zone = utz_zone_names;
   for (utz_k = 0; utz_k < UTZ_NUM_ZONE_NAMES; utz_k++) {
     if (ustrneq(zone, name, UTZ_MAX_ZONE_NAME_LEN)) {
-      utz_unpack_zone(&utz_zone_defns[advance_and_get_defn_idx(&zone)], name, zone_out);
+      unpack_zone(&utz_zone_defns[advance_and_get_defn_idx(&zone)], name, zone_out);
       return true;
     } else {
       advance_and_get_defn_idx(&zone);

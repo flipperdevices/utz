@@ -80,6 +80,9 @@ def parse_h_m(time):
         h, m = time.split(':')
         h = int(h)
         m = int(m)
+        if h < 0:
+            m = 60 - m
+            h -= 1
     else:
         h = int(time)
     return z, h, m

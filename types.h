@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum udayofweek_t : uint8_t {
 	UTZ_MONDAY = 1,
@@ -121,14 +122,8 @@ typedef struct uzone_t {
 
 /** @brief unpacked rule type, rules for daylight savings time */
 typedef struct urule_t {
-  union {
-    udatetime_t datetime;
-    struct {
-      udate_t date;
-      utime_t time;
-    };
-  };
-  uint8_t is_local_time;
+  udatetime_t datetime;
+  bool is_local_time;
   char letter;
   uint8_t offset_hours;
 } urule_t;

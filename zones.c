@@ -125,7 +125,7 @@ const uzone_packed_t utz_zone_defns[46] = {
 // America/Sao_Paulo	-3:00	Brazil	BR%sT
 {-12,   6,   7,  71},
 // America/St_Johns	-3:30	Canada	N%sT
-{-10,  13,   2,  77},
+{-14,  13,   2,  77},
 // Asia/Bangkok	7:00	-	ICT
 { 28,   0,   0,  82},
 // Asia/Dubai	4:00	-	GST

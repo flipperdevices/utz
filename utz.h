@@ -97,38 +97,22 @@ bool utz_udatetime_gt(const udatetime_t* dt1, const udatetime_t* dt2);
  */
 bool utz_udatetime_ge(const udatetime_t* dt1, const udatetime_t* dt2);
 
+/** @brief compare two datetime objects
+ *
+ * @return value less than, equal to, or greater than zero - comparison result
+ */
+int utz_udatetime_cmp(const udatetime_t* dt1, const udatetime_t* dt2);
+
+/** @brief add given offset to a datetime
+ *
+ * @param offset must adhere to uoffset_t contract, otherwise undefined behaviour.
+ * @return adjusted datetime
+ */
+udatetime_t utz_udatetime_add(const udatetime_t* dt, const uoffset_t *offset);
+
 /**************************************************************************/
 /*                         zone rule functions                            */
 /**************************************************************************/
-
-/** @brief unpack rule
- *
- *  @param rule_in pointer to packed rule
- *  @param cur_year year: 1 <= y <= 255 (2001 - 2255)
- *  @param rule_out pointer for the output unpacked rule
- *  @return void
- */
-void utz_unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t* rule_out);
-
-/** @brief unpack rules that are active in the current year
- *
- *  Note this assumes no two rules are active on the same day
- *
- *  @param rules_in pointer to packed rules
- *  @param num_rules the number of rules in the array
- *  @param cur_year year: 1 <= y <= 255 (2001 - 2255)
- *  @param rules_out pointer for the output unpacked rules
- *  @return void
- */
-void utz_unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint8_t cur_year, urule_t* rules_out);
-
-/** @brief get the rule that applies at datetime
- *
- *  @param rules pointer to rules
- *  @param datetime the datetime to check rules for
- *  @return a pointer the the rule that applies
- */
-const urule_t* utz_get_active_rule(const urule_t* rules, const udatetime_t* datetime);
 
 /** @brief get the offset for zone at datetime, taking into account daylight savings time rules
  *
@@ -139,15 +123,6 @@ const urule_t* utz_get_active_rule(const urule_t* rules, const udatetime_t* date
  */
 char utz_get_current_offset(const uzone_t* zone, const udatetime_t* datetime, uoffset_t* offset);
 
-/** @brief unpack timezone
- *
- *  @param name the name of the timezone
- *  @param zone_in pointer to input packed zone
- *  @param zone_in pointer to output unpacked zone
- *  @return void
- */
-void utz_unpack_zone(const uzone_packed_t* zone_in, const char* name, uzone_t* zone_out);
-
 /** @brief lookup a zone via zone_names
  *
  *  @param name the name of the zone to find
@@ -155,8 +130,6 @@ void utz_unpack_zone(const uzone_packed_t* zone_in, const char* name, uzone_t* z
  *  @return true if zone was found, false otherwise
  */
 bool utz_get_zone_by_name(const char* name, uzone_t* zone_out);
-
-int utz_udatetime_cmp(const udatetime_t* dt1, const udatetime_t* dt2);
 
 #ifdef UTZ_MKTIME
 uint32_t utz_mktime(const udatetime_t* dt);
