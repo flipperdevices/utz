@@ -77,7 +77,7 @@ static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint
  *  @param zone timezone which rules apply to
  *  @param rules pointer to rules
  *  @param datetime the datetime to check rules for
- *  @return a pointer the the rule that applies
+ *  @return a pointer the the rule that applies (or NULL if there are no rules)
  */
 static const urule_t* get_active_rule(const uzone_t *zone, const urule_t* rules, const udatetime_t* datetime);
 
@@ -255,6 +255,10 @@ static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint
   uint8_t l = 0;
   uint8_t current_rule_count = 1;
 
+  if (num_rules == 0) {
+    return;
+  }
+
   for (utz_i = 0; utz_i < num_rules && current_rule_count < MAX_CURRENT_RULES; utz_i++) {
     // First lets find the "last" rule of the previous year, for simplification 
     // this assumes that multiple rules don't apply to the same month and
@@ -279,6 +283,9 @@ static const urule_t* get_active_rule(const uzone_t* zone, const urule_t* rules,
 #ifndef UTZ_GLOBAL_COUNTERS
   int8_t utz_i = 0;
 #endif
+  if (zone->rules_len == 0) {
+    return NULL;
+  }
   // Rules are guaranteed to have year set to be equal to datetime's year (done in unpack_rule).
   for (utz_i = 1; utz_i < MAX_CURRENT_RULES; utz_i++) {
     const urule_t *rule = rules + utz_i;
@@ -312,8 +319,12 @@ char utz_get_current_offset(const uzone_t* zone, const udatetime_t* datetime, uo
   offset->minutes = zone->offset.minutes;
   offset->hours = zone->offset.hours;
   const urule_t *rule = get_active_rule(zone, cached_rules, datetime);
-  offset->hours += rule->offset_hours;
-  return rule->letter;
+  if (rule) {
+    offset->hours += rule->offset_hours;
+    return rule->letter;
+  } else {
+    return '-';
+  }
 }
 
 static void unpack_zone(const uzone_packed_t* zone_in, const char* name, uzone_t* zone_out) {

@@ -398,6 +398,30 @@ static void test_datetime_adjust(void) {
 	TEST(res.time.hour == 23);
 }
 
+// No daylight saving time
+static void test_brazzaville(void) {
+	uzone_t zone;
+	// Look up by name
+	TEST(utz_get_zone_by_name("Brazzaville", &zone));
+	TEST(strcmp(zone.name, "Brazzaville") == 0);
+	TEST(zone.rules_len == 0);
+	TEST(strcmp(zone.abrev_formatter, "WAT") == 0);
+
+	udatetime_t dt = {
+		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	uoffset_t offset;
+	char c = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(c == '-');
+	TEST(offset.hours == 1);
+	TEST(offset.minutes == 0);
+}
+
 
 int main(void) {
 	test_leap();
@@ -409,5 +433,6 @@ int main(void) {
 	test_st_johns();
 	test_new_york();
 	test_auckland();
+	test_brazzaville();
 	return 0;
 }
