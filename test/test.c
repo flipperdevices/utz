@@ -273,9 +273,7 @@ static void test_datetime_adjust(void) {
 	uoffset_t off;
 	udatetime_t dt, res;
 
-	/* +----------------------------------+
-	 * | Positive offset (same day)       |
-	 * +----------------------------------+ */
+	// Positive offset (same day)
 	dt = (udatetime_t){
 		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
 		.time = { .hour = 10, .minute = 30, .second = 0 }
@@ -287,28 +285,23 @@ static void test_datetime_adjust(void) {
 	TEST(res.time.minute == 45);
 	TEST(res.date.dayofmonth == 22);
 
-	/* +----------------------------------+
-	 * | Negative offset (same day)       |
-	 * +----------------------------------+ */
-	off = (uoffset_t){ .hours = -3, .minutes = -10 };
+	// Negative offset (same day)
+	off = (uoffset_t){ .hours = -4, .minutes = 50 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.time.hour == 7);
 	TEST(res.time.minute == 20);
 	TEST(res.date.dayofmonth == 22);
 
-	/* +----------------------------------+
-	 * | Minute overflow → next hour      |
-	 * +----------------------------------+ */
+
+	// Minute overflow -> next hour
 	off = (uoffset_t){ .hours = 0, .minutes = 45 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.time.hour == 11);
 	TEST(res.time.minute == 15);
 
-	/* +----------------------------------+
-	 * | Day increment (cross midnight)   |
-	 * +----------------------------------+ */
+	// Day increment (cross midnight)
 	dt.time.hour = 23;
 	dt.time.minute = 50;
 	off = (uoffset_t){ .hours = 0, .minutes = 15 };
@@ -318,9 +311,7 @@ static void test_datetime_adjust(void) {
 	TEST(res.time.minute == 5);
 	TEST(res.date.dayofmonth == 23);
 
-	/* +----------------------------------+
-	 * | Day decrement (negative offset)  |
-	 * +----------------------------------+ */
+	// Day decrement (negative offset)
 	dt = (udatetime_t){
 		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
 		.time = { .hour = 0, .minute = 10, .second = 0 }
@@ -332,9 +323,7 @@ static void test_datetime_adjust(void) {
 	TEST(res.time.minute == 40);
 	TEST(res.date.dayofmonth == 21);
 
-	/* +----------------------------------+
-	 * | Month rollover (Jan → Feb)       |
-	 * +----------------------------------+ */
+	// Month rollover (Jan -> Feb)
 	dt = (udatetime_t){
 		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 31),
 		.time = { .hour = 23, .minute = 0, .second = 0 }
@@ -346,9 +335,7 @@ static void test_datetime_adjust(void) {
 	TEST(res.date.month == 2);
 	TEST(res.date.dayofmonth == 1);
 
-	/* +----------------------------------+
-	 * | Year rollover (Dec → Jan)        |
-	 * +----------------------------------+ */
+	// Year rollover (Dec -> Jan)
 	dt = (udatetime_t){
 		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 12, 31),
 		.time = { .hour = 23, .minute = 30, .second = 0 }
@@ -362,11 +349,9 @@ static void test_datetime_adjust(void) {
 	TEST(res.time.hour == 0);
 	TEST(res.time.minute == 30);
 
-	/* +----------------------------------+
-	 * | Leap year: Feb 28 → Feb 29       |
-	 * +----------------------------------+ */
+	// Leap year: Feb 28 -> Feb 29
 	dt = (udatetime_t){
-		.date = utz_date_init(UYEAR_FROM_YEAR(2024), 2, 28),
+		.date = utz_date_init(UYEAR_FROM_YEAR(2028), 2, 28),
 		.time = { .hour = 23, .minute = 30, .second = 0 }
 	};
 	off = (uoffset_t){ .hours = 1, .minutes = 0 };
@@ -376,10 +361,8 @@ static void test_datetime_adjust(void) {
 	TEST(res.date.dayofmonth == 29);
 	TEST(res.time.hour == 0);
 
-	/* +----------------------------------+
-	 * | Leap year: Feb 29 → Mar 1        |
-	 * +----------------------------------+ */
-	dt.date.dayofmonth = 29;
+	// Leap year: Feb 29 -> Mar 1
+	dt.date = utz_date_init(UYEAR_FROM_YEAR(2028), 2, 29);
 	dt.time.hour = 23;
 	dt.time.minute = 0;
 
@@ -389,6 +372,30 @@ static void test_datetime_adjust(void) {
 	TEST(res.date.month == 3);
 	TEST(res.date.dayofmonth == 1);
 	TEST(res.time.hour == 1);
+
+	// Leap year: Mar 1 -> Feb 29
+	dt.date = utz_date_init(UYEAR_FROM_YEAR(2028), 3, 1);
+	dt.time.hour = 1;
+	dt.time.minute = 0;
+
+	off = (uoffset_t){ .hours = -2, .minutes = 0 };
+	res = utz_udatetime_add(&dt, &off);
+
+	TEST(res.date.month == 2);
+	TEST(res.date.dayofmonth == 29);
+	TEST(res.time.hour == 23);
+
+	// Normal year: Mar 1 -> Feb 28
+	dt.date = utz_date_init(UYEAR_FROM_YEAR(2027), 3, 1);
+	dt.time.hour = 1;
+	dt.time.minute = 0;
+
+	off = (uoffset_t){ .hours = -2, .minutes = 0 };
+	res = utz_udatetime_add(&dt, &off);
+
+	TEST(res.date.month == 2);
+	TEST(res.date.dayofmonth == 28);
+	TEST(res.time.hour == 23);
 }
 
 

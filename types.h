@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef enum udayofweek_t : uint8_t {
+typedef enum udayofweek_t {
 	UTZ_MONDAY = 1,
 	UTZ_TUESDAY,
 	UTZ_WEDNESDAY,
@@ -47,7 +47,7 @@ typedef struct udate_t {
   uint8_t year;       // 00-255 (offset 2000 ???)
   uint8_t month;      // 01-12
   uint8_t dayofmonth; // 01-31
-  udayofweek_t dayofweek;
+  uint8_t dayofweek;
 } udate_t;
 
 
