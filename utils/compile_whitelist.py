@@ -18,6 +18,8 @@ def main():
             zones.add(line.split('\t')[1].strip())
             zones.add(line.split('\t')[2].strip())
 
+    zones.add('Etc/Universal')
+
     with open('whitelist.txt', 'w') as f:
         f.write('\n'.join(sorted(zones)))
 

@@ -145,6 +145,9 @@ uint32_t utz_mktime(const udatetime_t* dt);
 /*                                 zones                                  */
 /**************************************************************************/
 
+/** @brief default timezone, UTC. */
+extern const uzone_t utz_zone_default;
+
 extern const urule_packed_t utz_zone_rules[];
 extern const uzone_packed_t utz_zone_defns[];
 extern const char utz_zone_abrevs[];

@@ -9,7 +9,7 @@ import os
 
 from utz import TimeZoneDatabase
 
-DEFAULT_REGIONS = "africa,asia,australasia,backward,europe,northamerica,pacificnew,southamerica"
+DEFAULT_REGIONS = "africa,asia,australasia,backward,europe,northamerica,pacificnew,southamerica,etcetera"
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 H_NAME = 'zones.h'
 C_NAME = 'zones.c'

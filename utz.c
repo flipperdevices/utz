@@ -51,6 +51,18 @@ static const char months_of_year[] = {
 };
 #endif
 
+const uzone_t utz_zone_default = {
+  .name = "Universal",
+  .abrev_formatter = "UTC",
+  .offset = {
+    .hours = 0,
+    .minutes = 0
+  },
+  .rules = NULL,
+  .rules_len = 0,
+  .src = NULL,
+};
+
 /** @brief unpack rule
  *
  *  @param rule_in pointer to packed rule
@@ -90,8 +102,8 @@ static const urule_t* get_active_rule(const uzone_t *zone, const urule_t* rules,
  */
 static void unpack_zone(const uzone_packed_t* zone_in, const char* name, uzone_t* zone_out);
 
-static const uzone_packed_t* last_zone;
-static uint8_t last_year;
+static const uzone_packed_t* last_zone = NULL;
+static uint8_t last_year = 0;
 
 /** @brief cached rules for the zone and year from the last call of utz_get_current_offset */
 static urule_t cached_rules[MAX_CURRENT_RULES];

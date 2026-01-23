@@ -422,6 +422,28 @@ static void test_brazzaville(void) {
 	TEST(offset.minutes == 0);
 }
 
+static void test_default(void) {
+	udatetime_t dt = {
+		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 6, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	uoffset_t offset;
+	char c = utz_get_current_offset(&utz_zone_default, &dt, &offset);
+	TEST(c == '-');
+	TEST(offset.hours == 0);
+	TEST(offset.minutes == 0);
+
+	uzone_t zone;
+	TEST(utz_get_zone_by_name("Helsinki", &zone));
+	c = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(c == 'S');
+	TEST(offset.hours == 3);
+	TEST(offset.minutes == 0);
+}
 
 int main(void) {
 	test_leap();
@@ -434,5 +456,6 @@ int main(void) {
 	test_new_york();
 	test_auckland();
 	test_brazzaville();
+	test_default();
 	return 0;
 }

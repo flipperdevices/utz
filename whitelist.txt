@@ -109,6 +109,7 @@ Australia/Darwin
 Australia/Hobart
 Australia/Perth
 Australia/Sydney
+Etc/Universal
 Europe/Amsterdam
 Europe/Ankara
 Europe/Athens
