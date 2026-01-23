@@ -114,5 +114,5 @@ extern const uzone_packed_t utz_zone_defns[46];
 #define UTZ_NUM_ZONE_NAMES 101
 #define UTZ_MAX_ZONE_NAME_LEN 17
 
-extern const char utz_zone_names[960];
+extern const char utz_zone_names[961];
 #endif /* _ZONES_H */

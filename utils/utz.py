@@ -438,6 +438,8 @@ class TimeZoneDatabase(object):
             if len(char) > max_char:
                 max_char = len(char)
             c_buf.append(("%" + str(max_len*5) + "s, %3d, // %s") % ( "'%s'" % "','".join(char), index, name))
+        total_char += 1
+        c_buf.append(" " * (max_len * 5 + 4) + "0")
         c_buf[c_buf.index('PLACEHOLDER')] = 'const char utz_zone_names[%d] = {' % total_char
         c_buf.append('};')
         h_buf.extend(['', '#define UTZ_NUM_ZONE_NAMES %d' % len(aliases), '#define UTZ_MAX_ZONE_NAME_LEN %d' % max_char, ''])

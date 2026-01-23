@@ -131,6 +131,13 @@ char utz_get_current_offset(const uzone_t* zone, const udatetime_t* datetime, uo
  */
 bool utz_get_zone_by_name(const char* name, uzone_t* zone_out);
 
+/** @brief iterate through timezone names.
+ *
+ * @param prev pointer to a timezone name in the utz_zone_names table.
+ * @return pointer to the next timezone name in the table or NULL if no names left.
+ */
+const char *utz_next_zone_name(const char *prev);
+
 #ifdef UTZ_MKTIME
 uint32_t utz_mktime(const udatetime_t* dt);
 #endif

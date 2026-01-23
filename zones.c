@@ -188,7 +188,7 @@ const uzone_packed_t utz_zone_defns[46] = {
 {-44,   0,   0, 205},
 };
 
-const char utz_zone_names[960] = {
+const char utz_zone_names[961] = {
                                             'A','d','e','l','a','i','d','e','\0',  31, // Adelaide
                                         'A','h','m','e','d','a','b','a','d','\0',  24, // Ahmedabad
                                         'A','n','c','h','o','r','a','g','e','\0',   4, // Anchorage
@@ -290,4 +290,5 @@ const char utz_zone_names[960] = {
                                                         'W','u','h','a','n','\0',  27, // Wuhan
                                                        'X','i','\'','a','n','\0',  27, // Xi'an
                                         'Z','h','e','n','g','z','h','o','u','\0',  27, // Zhengzhou
+                                                                                    0
 };

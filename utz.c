@@ -346,6 +346,18 @@ static uint8_t advance_and_get_defn_idx(const char** list) {
   return **list;
 }
 
+const char *utz_next_zone_name(const char *prev) {
+  do {
+    ++prev;
+  } while (*prev);
+  prev += 2;
+  if (*prev) {
+    return prev;
+  } else {
+    return NULL;
+  }
+}
+
 bool utz_get_zone_by_name(const char* name, uzone_t* zone_out) {
 #ifndef UTZ_GLOBAL_COUNTERS
   uint16_t utz_k;
