@@ -53,8 +53,23 @@ typedef struct udate_t {
 
 /** @brief datetime type */
 typedef struct udatetime_t {
-  udate_t date;
-  utime_t time;
+  union {
+    udate_t date;
+    struct {
+      uint8_t year;
+      uint8_t month;
+      uint8_t dayofmonth;
+      uint8_t dayofweek;
+    };
+  };
+  union {
+    utime_t time;
+    struct {
+      uint8_t hour;
+      uint8_t minute;
+      uint8_t second;
+    };
+  };
 } udatetime_t;
 
 /** @brief timezone offset type */
