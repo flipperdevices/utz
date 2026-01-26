@@ -445,6 +445,39 @@ static void test_default(void) {
 	TEST(offset.minutes == 0);
 }
 
+static void test_checked_fns(void) {
+	udate_t date;
+	TEST(!utz_date_init_checked(1999, 1, 22, &date)); // year is too low
+	TEST(!utz_date_init_checked(2300, 1, 22, &date)); // year is too high
+	TEST(!utz_date_init_checked(2026, 13, 22, &date)); // month
+	TEST(!utz_date_init_checked(2026, 1, 32, &date)); // day
+	TEST(!utz_date_init_checked(2026, 1, 0, &date)); // day
+	TEST(!utz_date_init_checked(2026, 2, 30, &date)); // day
+	TEST(!utz_date_init_checked(2026, 2, 29, &date)); // day
+	TEST(utz_date_init_checked(2026, 2, 28, &date)); // day ok
+	TEST(utz_date_init_checked(2028, 2, 29, &date)); // day ok
+}
+
+static void test_init_offset(void) {
+	uoffset_t off;
+
+	off = utz_offset_init(false, 1, 30);
+	TEST(off.hours == 1);
+	TEST(off.minutes == 30);
+
+	off = utz_offset_init(false, 0, 75);
+	TEST(off.hours == 1);
+	TEST(off.minutes == 15);
+
+	off = utz_offset_init(true, 1, 20);
+	TEST(off.hours == -2);
+	TEST(off.minutes == 40);
+
+	off = utz_offset_init(true, 0, 75);
+	TEST(off.hours == -2);
+	TEST(off.minutes == 45);
+}
+
 int main(void) {
 	test_leap();
 	test_dayofweek();
@@ -457,5 +490,7 @@ int main(void) {
 	test_auckland();
 	test_brazzaville();
 	test_default();
+	test_checked_fns();
+	test_init_offset();
 	return 0;
 }

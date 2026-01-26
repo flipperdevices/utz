@@ -120,11 +120,24 @@ static bool ustrneq(const char* string1, const char* string2, uint8_t n) {
   return true;
 }
 
+static uint8_t days_in_month(uint8_t y, uint8_t m);
+
 udayofweek_t utz_dayofweek(uint8_t y, uint8_t m, uint8_t d) {
     static const uint8_t dayofweek_table[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
     y -= m < 3;
     d = ((UYEAR_TO_YEAR(y) + (UYEAR_TO_YEAR(y)/4) - (UYEAR_TO_YEAR(y)/100) + UYEAR_OFFSET/400 + dayofweek_table[m-1] + d) % 7);
     if (d == 0) { return 7; } else { return d; }
+}
+
+bool utz_dayofweek_checked(uint8_t y, uint8_t m, uint8_t d, udayofweek_t* dow_out) {
+    if (m < 1 || m > 12) {
+      return false;
+    }
+    if (d < 1 || d > days_in_month(y, m)) {
+      return false;
+    }
+    *dow_out = utz_dayofweek(y, m, d);
+    return true;
 }
 
 bool utz_is_leap_year(uint8_t y) {
@@ -426,4 +439,59 @@ udate_t utz_date_init(uint8_t year, uint8_t month, uint8_t day) {
     .dayofmonth = day,
     .dayofweek = day_of_week
   };
+}
+
+bool utz_date_init_checked(uint16_t year, uint8_t month, uint8_t day, udate_t *date_out) {
+  if (year < UYEAR_OFFSET || year > UYEAR_OFFSET + 255) {
+    return false;
+  }
+  uint8_t uyear = UYEAR_FROM_YEAR(year);
+  udayofweek_t dow = UTZ_MONDAY;
+  if (!utz_dayofweek_checked(uyear, month, day, &dow)) {
+    return false;
+  }
+  date_out->year = uyear;
+  date_out->month = month;
+  date_out->dayofmonth = day;
+  date_out->dayofweek = dow;
+  return true;
+}
+
+bool utz_time_init_checked(uint8_t hour, uint8_t minute, uint8_t second, utime_t* time_out) {
+  if (hour >= 24) {
+    return false;
+  }
+  if (minute >= 60) {
+    return false;
+  }
+  // no leap seconds
+  if (second >= 60) {
+    return false;
+  }
+  time_out->hour = hour;
+  time_out->minute = minute;
+  time_out->second = second;
+  return true;
+}
+
+uoffset_t utz_offset_init(bool negative, uint8_t hours, uint8_t minutes) {
+  hours += minutes / 60;
+  minutes %= 60;
+
+  if (!negative) {
+    return (uoffset_t){
+      .hours = hours,
+      .minutes = minutes,
+    };
+  } else if (minutes == 0) {
+    return (uoffset_t){
+      .hours = -hours,
+      .minutes = 0,
+    };
+  } else {
+    return (uoffset_t){
+      .hours = -hours - 1,
+      .minutes = 60 - minutes
+    };
+  }
 }

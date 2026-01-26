@@ -33,6 +33,27 @@
  */
 udate_t utz_date_init(uint8_t year, uint8_t month, uint8_t day);
 
+/** @brief populates udate_t structure, checking input.
+ *  @param y year
+ *  @param m month: 1 <= m <= 12
+ *  @param d day: 1 <= d <= 31
+ *  @param[out] date_out result
+ *  @return true on success
+ */
+bool utz_date_init_checked(uint16_t year, uint8_t month, uint8_t day, udate_t* date_out);
+
+/** @brief populates utime_t structure, checking input.
+ *  @param[out] time_out result
+ *  @return true on success
+ */
+bool utz_time_init_checked(uint8_t hour, uint8_t minute, uint8_t second, utime_t* time_out);
+
+/** @brief initializes uoffset_t
+ *  @param negative time offset sign, true for negative.
+ *  @return normalized offset
+ */
+uoffset_t utz_offset_init(bool negative, uint8_t hours, uint8_t minutes);
+
 /** @brief returns the day of the week for the given year/month/day
  *
  *  @param y year: 1 <= y <= 255 (see UYEAR_FROM_YEAR)
@@ -41,6 +62,16 @@ udate_t utz_date_init(uint8_t year, uint8_t month, uint8_t day);
  *  @return day of week (Monday = 1, Sunday = 7)
  */
 udayofweek_t utz_dayofweek(uint8_t y, uint8_t m, uint8_t d);
+
+/** @brief returns the day of the week for the given year/month/day, checks input
+ *
+ *  @param y year: 1 <= y <= 255 (see UYEAR_FROM_YEAR)
+ *  @param m month: 1 <= m <= 12
+ *  @param d day: 1 <= d <= 31
+ *  @param[out] dow_out resulting day of week (Monday = 1, Sunday = 7)
+ *  @return true on success
+ */
+bool utz_dayofweek_checked(uint8_t y, uint8_t m, uint8_t d, udayofweek_t* dow_out);
 
 /** @brief returns true if the year is a leap year
  *
