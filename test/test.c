@@ -478,6 +478,46 @@ static void test_init_offset(void) {
 	TEST(off.minutes == 45);
 }
 
+static void test_neg_offset(void) {
+	uoffset_t off, neg;
+
+	off.hours = 1;
+	off.minutes = 20;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == -2);
+	TEST(neg.minutes == 40);
+
+	off.hours = -1;
+	off.minutes = 20;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == 0);
+	TEST(neg.minutes == 40);
+
+	off.hours = 1;
+	off.minutes = 0;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == -1);
+	TEST(neg.minutes == 0);
+
+	off.hours = -2;
+	off.minutes = 0;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == 2);
+	TEST(neg.minutes == 0);
+
+	off.hours = 0;
+	off.minutes = 15;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == -1);
+	TEST(neg.minutes == 45);
+
+	off.hours = -1;
+	off.minutes = 15;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == 0);
+	TEST(neg.minutes == 45);
+}
+
 int main(void) {
 	test_leap();
 	test_dayofweek();
@@ -492,5 +532,6 @@ int main(void) {
 	test_default();
 	test_checked_fns();
 	test_init_offset();
+	test_neg_offset();
 	return 0;
 }

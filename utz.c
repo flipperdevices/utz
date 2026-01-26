@@ -233,6 +233,25 @@ udatetime_t utz_udatetime_add(const udatetime_t* dt, const uoffset_t *offset) {
   return r;
 }
 
+uoffset_t utz_offset_neg(const uoffset_t *offset) {
+  uoffset_t neg_offset;
+
+  neg_offset.hours = -offset->hours;
+  if (offset->minutes == 0) {
+    neg_offset.minutes = 0;
+  } else {
+    neg_offset.minutes = 60 - offset->minutes;
+    neg_offset.hours -= 1;
+  }
+  return neg_offset;
+}
+
+udatetime_t utz_udatetime_sub(const udatetime_t* dt, const uoffset_t *offset) {
+  uoffset_t neg_offset = utz_offset_neg(offset);
+
+  return utz_udatetime_add(dt, &neg_offset);
+}
+
 static void unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t* rule_out) {
   static const char letter_lut[3] = {'-', 'S', 'D'};
 

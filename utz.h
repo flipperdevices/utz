@@ -54,6 +54,12 @@ bool utz_time_init_checked(uint8_t hour, uint8_t minute, uint8_t second, utime_t
  */
 uoffset_t utz_offset_init(bool negative, uint8_t hours, uint8_t minutes);
 
+/** @brief negates an offset
+ *
+ *  @return negative offset
+ */
+uoffset_t utz_offset_neg(const uoffset_t *offset);
+
 /** @brief returns the day of the week for the given year/month/day
  *
  *  @param y year: 1 <= y <= 255 (see UYEAR_FROM_YEAR)
@@ -140,6 +146,13 @@ int utz_udatetime_cmp(const udatetime_t* dt1, const udatetime_t* dt2);
  * @return adjusted datetime
  */
 udatetime_t utz_udatetime_add(const udatetime_t* dt, const uoffset_t *offset);
+
+/** @brief subtract given offset to a datetime
+ *
+ * @param offset must adhere to uoffset_t contract, otherwise undefined behaviour.
+ * @return adjusted datetime
+ */
+udatetime_t utz_udatetime_sub(const udatetime_t* dt, const uoffset_t *offset);
 
 /**************************************************************************/
 /*                         zone rule functions                            */
