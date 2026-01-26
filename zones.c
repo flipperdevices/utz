@@ -42,7 +42,7 @@ const urule_packed_t utz_zone_rules[39] = {
 { 13, 255, 7,  0,  1,  1, 0, 1, 10, 0}, // 	Zion	2013	max	-	Oct	lastSun	2:00	0	S
 };
 
-const char utz_zone_abrevs[209] = {
+const char utz_zone_abrevs[213] = {
 'E','E','S','T','\0',
 'W','A','T','\0',
 'C','A','T','\0',
@@ -77,6 +77,7 @@ const char utz_zone_abrevs[209] = {
 'A','C','S','T','\0',
 'A','E','%','c','T','\0',
 'A','W','S','T','\0',
+'U','T','C','\0',
 'C','E','%','c','T','\0',
 'E','E','%','c','T','\0',
 '+','0','3','\0',
@@ -88,7 +89,7 @@ const char utz_zone_abrevs[209] = {
 'S','S','T','\0',
 };
 
-const uzone_packed_t utz_zone_defns[46] = {
+const uzone_packed_t utz_zone_defns[47] = {
 // Africa/Cairo	2:00	Egypt	EE%sT
 {  8,   0,   0,   0},
 // Africa/Lagos	1:00	-	WAT
@@ -165,43 +166,45 @@ const uzone_packed_t utz_zone_defns[46] = {
 { 32,   0,   0, 157},
 // Australia/Sydney	10:00	AN	AE%sT
 { 40,   0,   2, 151},
+// 	Etc/UTC		0	-	UTC
+{  0,   0,   0, 162},
 // Europe/Belgrade	1:00	EU	CE%sT
 // Europe/Berlin	1:00	EU	CE%sT
 // Europe/Madrid	1:00	EU	CE%sT
 // Europe/Rome	1:00	EU	CE%sT
-{  4,  17,   2, 162},
+{  4,  17,   2, 166},
 // Europe/Helsinki	2:00	EU	EE%sT
-{  8,  17,   2, 168},
+{  8,  17,   2, 172},
 // Europe/Istanbul	3:00	-	+03
-{ 12,   0,   0, 174},
+{ 12,   0,   0, 178},
 // Europe/London	0:00	EU	GMT/BST
-{  0,  17,   2, 178},
+{  0,  17,   2, 182},
 // Europe/Moscow	3:00	-	MSK
-{ 12,   0,   0, 186},
+{ 12,   0,   0, 190},
 // Pacific/Auckland	12:00	NZ	NZ%sT
-{ 48,  33,   2, 190},
+{ 48,  33,   2, 194},
 // Pacific/Guam	10:00	-	ChST
-{ 40,   0,   0, 196},
+{ 40,   0,   0, 200},
 // Pacific/Honolulu	-10:00	-	HST
-{-40,   0,   0, 201},
+{-40,   0,   0, 205},
 // Pacific/Pago_Pago	-11:00	-	SST
-{-44,   0,   0, 205},
+{-44,   0,   0, 209},
 };
 
-const char utz_zone_names[961] = {
+const char utz_zone_names[972] = {
                                             'A','d','e','l','a','i','d','e','\0',  31, // Adelaide
                                         'A','h','m','e','d','a','b','a','d','\0',  24, // Ahmedabad
                                         'A','n','c','h','o','r','a','g','e','\0',   4, // Anchorage
-                                                    'A','n','k','a','r','a','\0',  39, // Ankara
+                                                    'A','n','k','a','r','a','\0',  40, // Ankara
                                                 'A','t','l','a','n','t','a','\0',  12, // Atlanta
-                                            'A','u','c','k','l','a','n','d','\0',  42, // Auckland
+                                            'A','u','c','k','l','a','n','d','\0',  43, // Auckland
                                         'B','a','n','g','a','l','o','r','e','\0',  24, // Bangalore
                                                 'B','a','n','g','k','o','k','\0',  18, // Bangkok
-                                        'B','a','r','c','e','l','o','n','a','\0',  37, // Barcelona
+                                        'B','a','r','c','e','l','o','n','a','\0',  38, // Barcelona
                                                 'B','e','i','j','i','n','g','\0',  27, // Beijing
-                                            'B','e','l','g','r','a','d','e','\0',  37, // Belgrade
+                                            'B','e','l','g','r','a','d','e','\0',  38, // Belgrade
                     'B','e','l','o',' ','H','o','r','i','z','o','n','t','e','\0',  16, // Belo Horizonte
-                                                    'B','e','r','l','i','n','\0',  37, // Berlin
+                                                    'B','e','r','l','i','n','\0',  38, // Berlin
                                                     'B','o','s','t','o','n','\0',  12, // Boston
                                 'B','r','a','z','z','a','v','i','l','l','e','\0',   1, // Brazzaville
                                             'B','r','i','s','b','a','n','e','\0',  32, // Brisbane
@@ -218,21 +221,21 @@ const char utz_zone_names[961] = {
                                                     'D','e','n','v','e','r','\0',   7, // Denver
                                                         'D','u','b','a','i','\0',  19, // Dubai
                                 'G','u','a','d','a','l','a','j','a','r','a','\0',  11, // Guadalajara
-                                                            'G','u','a','m','\0',  43, // Guam
+                                                            'G','u','a','m','\0',  44, // Guam
                                         'G','u','a','n','g','z','h','o','u','\0',  27, // Guangzhou
                                                 'H','a','l','i','f','a','x','\0',   8, // Halifax
-                                                'H','a','m','b','u','r','g','\0',  37, // Hamburg
+                                                'H','a','m','b','u','r','g','\0',  38, // Hamburg
                                             'H','a','n','g','z','h','o','u','\0',  27, // Hangzhou
                                                     'H','a','r','a','r','e','\0',   2, // Harare
                                                     'H','a','r','b','i','n','\0',  27, // Harbin
-                                            'H','e','l','s','i','n','k','i','\0',  38, // Helsinki
+                                            'H','e','l','s','i','n','k','i','\0',  39, // Helsinki
                                                     'H','o','b','a','r','t','\0',  34, // Hobart
                                         'H','o','n','g',' ','K','o','n','g','\0',  20, // Hong Kong
-                                            'H','o','n','o','l','u','l','u','\0',  44, // Honolulu
+                                            'H','o','n','o','l','u','l','u','\0',  45, // Honolulu
                                                 'H','o','u','s','t','o','n','\0',   6, // Houston
                                         'H','y','d','e','r','a','b','a','d','\0',  24, // Hyderabad
                         'I','n','l','a','n','d',' ','E','m','p','i','r','e','\0',   9, // Inland Empire
-                                            'I','s','t','a','n','b','u','l','\0',  39, // Istanbul
+                                            'I','s','t','a','n','b','u','l','\0',  40, // Istanbul
                                         'J','e','r','u','s','a','l','e','m','\0',  21, // Jerusalem
                                                         'J','i','n','a','n','\0',  27, // Jinan
                                                 'K','a','r','a','c','h','i','\0',  22, // Karachi
@@ -240,17 +243,17 @@ const char utz_zone_names[961] = {
                                                 'K','o','l','k','a','t','a','\0',  24, // Kolkata
                                                     'K','u','w','a','i','t','\0',  25, // Kuwait
                                                     'L','a','h','o','r','e','\0',  22, // Lahore
-                                                    'L','o','n','d','o','n','\0',  40, // London
+                                                    'L','o','n','d','o','n','\0',  41, // London
                                 'L','o','s',' ','A','n','g','e','l','e','s','\0',   9, // Los Angeles
-                                                    'M','a','d','r','i','d','\0',  37, // Madrid
+                                                    'M','a','d','r','i','d','\0',  38, // Madrid
                                                     'M','a','n','a','u','s','\0',  10, // Manaus
                                 'M','e','x','i','c','o',' ','C','i','t','y','\0',  11, // Mexico City
                                                         'M','i','a','m','i','\0',  12, // Miami
-                                                    'M','i','d','w','a','y','\0',  45, // Midway
-                                                        'M','i','l','a','n','\0',  37, // Milan
-                                                    'M','o','s','c','o','w','\0',  41, // Moscow
+                                                    'M','i','d','w','a','y','\0',  46, // Midway
+                                                        'M','i','l','a','n','\0',  38, // Milan
+                                                    'M','o','s','c','o','w','\0',  42, // Moscow
                                                     'M','u','m','b','a','i','\0',  24, // Mumbai
-                                                    'M','u','n','i','c','h','\0',  37, // Munich
+                                                    'M','u','n','i','c','h','\0',  38, // Munich
                                                     'N','a','g','o','y','a','\0',  29, // Nagoya
                                                 'N','a','i','r','o','b','i','\0',   3, // Nairobi
                                             'N','a','n','c','h','a','n','g','\0',  27, // Nanchang
@@ -264,20 +267,20 @@ const char utz_zone_names[961] = {
                                                 'Q','i','n','g','d','a','o','\0',  27, // Qingdao
                                                 'R','a','n','g','o','o','n','\0',  30, // Rangoon
                                                     'R','e','g','i','n','a','\0',  14, // Regina
-                                    'R','h','i','n','e','-','R','u','h','r','\0',  37, // Rhine-Ruhr
+                                    'R','h','i','n','e','-','R','u','h','r','\0',  38, // Rhine-Ruhr
                     'R','i','o',' ','d','e',' ','J','a','n','e','i','r','o','\0',  16, // Rio de Janeiro
-                                                            'R','o','m','e','\0',  37, // Rome
+                                                            'R','o','m','e','\0',  38, // Rome
                         'S','a','n',' ','F','r','a','n','c','i','s','c','o','\0',   9, // San Francisco
                                             'S','a','n','t','i','a','g','o','\0',  15, // Santiago
                                         'S','a','o',' ','P','a','u','l','o','\0',  16, // Sao Paulo
-                                            'S','a','r','a','j','e','v','o','\0',  37, // Sarajevo
+                                            'S','a','r','a','j','e','v','o','\0',  38, // Sarajevo
                                                         'S','e','o','u','l','\0',  26, // Seoul
                                             'S','h','a','n','g','h','a','i','\0',  27, // Shanghai
                                                 'S','h','a','n','t','o','u','\0',  27, // Shantou
                                             'S','h','e','n','y','a','n','g','\0',  27, // Shenyang
                                             'S','h','e','n','z','h','e','n','\0',  27, // Shenzhen
                                             'S','t',' ','J','o','h','n','s','\0',  17, // St Johns
-                                        'S','t','u','t','t','g','a','r','t','\0',  37, // Stuttgart
+                                        'S','t','u','t','t','g','a','r','t','\0',  38, // Stuttgart
                                                         'S','u','r','a','t','\0',  24, // Surat
                                                     'S','y','d','n','e','y','\0',  36, // Sydney
                                                     'T','a','i','p','e','i','\0',  27, // Taipei
@@ -285,6 +288,7 @@ const char utz_zone_names[961] = {
                                                 'T','i','a','n','j','i','n','\0',  27, // Tianjin
                                                 'T','i','j','u','a','n','a','\0',   9, // Tijuana
                                                         'T','o','k','y','o','\0',  29, // Tokyo
+                                        'U','n','i','v','e','r','s','a','l','\0',  37, // Universal
             'W','a','s','h','i','n','g','t','o','n',',',' ','D','.','C','.','\0',  12, // Washington, D.C.
                                                 'W','e','n','z','h','o','u','\0',  27, // Wenzhou
                                                         'W','u','h','a','n','\0',  27, // Wuhan
