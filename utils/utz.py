@@ -159,7 +159,7 @@ class Rule(Entry):
             l = 2
 
         # see utz.h for struct definitions
-        return "{%3d, %3d, %d, %2d, %2d, %2d, %d, %d, %2d, %d}, // %s" % (
+        return "{{%3d}, {%3d}, %d, %2d, %2d, %2d, %d, %d, %2d, %d}, // %s" % (
                 _from,                     # years since 2000
                 to,                        # years since 2000
                 on_u,                      # day of week (mon=1) unless 0, then assume format is "dayOfMonth"

@@ -12,27 +12,27 @@
 				} } while(false)
 
 static void test_leap(void) {
-	TEST(utz_is_leap_year(UYEAR_FROM_YEAR(2000)));
-	TEST(utz_is_leap_year(UYEAR_FROM_YEAR(2004)));
-	TEST(utz_is_leap_year(UYEAR_FROM_YEAR(2008)));
-	TEST(!utz_is_leap_year(UYEAR_FROM_YEAR(2025)));
-	TEST(!utz_is_leap_year(UYEAR_FROM_YEAR(2026)));
-	TEST(!utz_is_leap_year(UYEAR_FROM_YEAR(2100)));
-	TEST(utz_is_leap_year(UYEAR_FROM_YEAR(2104)));
-	TEST(utz_is_leap_year(UYEAR_FROM_YEAR(2204)));
-	TEST(!utz_is_leap_year(UYEAR_FROM_YEAR(2200)));
+	TEST(utz_is_leap_year(2000));
+	TEST(utz_is_leap_year(2004));
+	TEST(utz_is_leap_year(2008));
+	TEST(!utz_is_leap_year(2025));
+	TEST(!utz_is_leap_year(2026));
+	TEST(!utz_is_leap_year(2100));
+	TEST(utz_is_leap_year(2104));
+	TEST(utz_is_leap_year(2204));
+	TEST(!utz_is_leap_year(2200));
 }
 
 static void test_dayofweek(void) {
-	TEST(utz_dayofweek(UYEAR_FROM_YEAR(2026), 1, 22) == UTZ_THURSDAY);
-	TEST(utz_dayofweek(UYEAR_FROM_YEAR(2101), 4, 26) == UTZ_TUESDAY);
-	TEST(utz_dayofweek(UYEAR_FROM_YEAR(2054), 5, 17) == UTZ_SUNDAY);
-	TEST(utz_dayofweek(UYEAR_FROM_YEAR(2053), 12, 12) == UTZ_FRIDAY);
+	TEST(utz_dayofweek(2026, 1, 22) == UTZ_THURSDAY);
+	TEST(utz_dayofweek(2101, 4, 26) == UTZ_TUESDAY);
+	TEST(utz_dayofweek(2054, 5, 17) == UTZ_SUNDAY);
+	TEST(utz_dayofweek(2053, 12, 12) == UTZ_FRIDAY);
 }
 
 static void test_cmp(void) {
 	udatetime_t dt1 = {
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
 			.minute = 22,
@@ -40,7 +40,7 @@ static void test_cmp(void) {
 		}
 	};
 	udatetime_t dt2 = {
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
 			.minute = 22,
@@ -62,24 +62,24 @@ static void test_cmp(void) {
 	TEST(utz_udatetime_cmp(&dt1, &dt2) > 0);
 
 	dt2 = dt1;
-	dt2.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 23);
+	dt2.date = utz_date_init(2026, 1, 23);
 	TEST(utz_udatetime_cmp(&dt1, &dt2) < 0);
 
-	dt2.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 21);
+	dt2.date = utz_date_init(2026, 1, 21);
 	TEST(utz_udatetime_cmp(&dt1, &dt2) > 0);
 
 	dt2 = dt1;
-	dt2.date = utz_date_init(UYEAR_FROM_YEAR(2026), 2, 22);
+	dt2.date = utz_date_init(2026, 2, 22);
 	TEST(utz_udatetime_cmp(&dt1, &dt2) < 0);
 
-	dt2.date = utz_date_init(UYEAR_FROM_YEAR(2026), 0, 22);
+	dt2.date = utz_date_init(2026, 0, 22);
 	TEST(utz_udatetime_cmp(&dt1, &dt2) > 0);
 
 	dt2 = dt1;
-	dt2.date = utz_date_init(UYEAR_FROM_YEAR(2027), 1, 22);
+	dt2.date = utz_date_init(2027, 1, 22);
 	TEST(utz_udatetime_cmp(&dt1, &dt2) < 0);
 
-	dt2.date = utz_date_init(UYEAR_FROM_YEAR(2025), 1, 22);
+	dt2.date = utz_date_init(2025, 1, 22);
 	TEST(utz_udatetime_cmp(&dt1, &dt2) > 0);
 }
 
@@ -102,7 +102,7 @@ static void test_berlin(void) {
 
 	// Winter time
 	udatetime_t dt = {
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
 			.minute = 22,
@@ -116,7 +116,7 @@ static void test_berlin(void) {
 	TEST(offset.minutes == 0);
 
 	// Winter time, right before switching to summer time
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2026), 3, 29);
+	dt.date = utz_date_init(2026, 3, 29);
 	dt.time.hour = 0;
 	c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == '-');
@@ -124,7 +124,7 @@ static void test_berlin(void) {
 	TEST(offset.minutes == 0);
 
 	// Summer time, right after switching from winter time
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2026), 3, 29);
+	dt.date = utz_date_init(2026, 3, 29);
 	dt.time.hour = 1;
 	c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == 'S');
@@ -132,7 +132,7 @@ static void test_berlin(void) {
 	TEST(offset.minutes == 0);
 
 	// Summer time, right before switching to winter time
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2026), 10, 25);
+	dt.date = utz_date_init(2026, 10, 25);
 	dt.time.hour = 0;
 	c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == 'S');
@@ -167,7 +167,7 @@ static void test_new_york(void) {
 
 	// Winter time
 	udatetime_t dt = {
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
 			.minute = 22,
@@ -182,7 +182,7 @@ static void test_new_york(void) {
 
 	// Winter time, right before switching to summer time
 	// Switch at 2:00 local time - 7:00 UTC
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2026), 3, 8);
+	dt.date = utz_date_init(2026, 3, 8);
 	dt.time.hour = 6;
 	c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == 'S');
@@ -198,7 +198,7 @@ static void test_new_york(void) {
 
 	// Summer time, right before switching to winter time
 	// Switch at 2:00 local time - 6:00 UTC
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2026), 11, 1);
+	dt.date = utz_date_init(2026, 11, 1);
 	dt.time.hour = 5;
 	c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == 'D');
@@ -223,7 +223,7 @@ static void test_auckland(void) {
 
 	// Summer time
 	udatetime_t dt = {
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
 			.minute = 22,
@@ -238,7 +238,7 @@ static void test_auckland(void) {
 
 	// Summer time, right before switching to winter time
 	// Switch at 3:00 local time - 14:00 UTC previous day
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2026), 4, 4);
+	dt.date = utz_date_init(2026, 4, 4);
 	dt.time.hour = 13;
 	c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == 'D');
@@ -254,7 +254,7 @@ static void test_auckland(void) {
 
 	// Winter time, right before switching to summer time
 	// Switch at 2:00 local time - 14:00 UTC previous day
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2026), 9, 26);
+	dt.date = utz_date_init(2026, 9, 26);
 	dt.time.hour = 13;
 	c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == 'S');
@@ -275,7 +275,7 @@ static void test_datetime_adjust(void) {
 
 	// Positive offset (same day)
 	dt = (udatetime_t){
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.date = utz_date_init(2026, 1, 22),
 		.time = { .hour = 10, .minute = 30, .second = 0 }
 	};
 	off = (uoffset_t){ .hours = 2, .minutes = 15 };
@@ -313,7 +313,7 @@ static void test_datetime_adjust(void) {
 
 	// Day decrement (negative offset)
 	dt = (udatetime_t){
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.date = utz_date_init(2026, 1, 22),
 		.time = { .hour = 0, .minute = 10, .second = 0 }
 	};
 	off = (uoffset_t){ .hours = -1, .minutes = 30 };
@@ -325,7 +325,7 @@ static void test_datetime_adjust(void) {
 
 	// Month rollover (Jan -> Feb)
 	dt = (udatetime_t){
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 31),
+		.date = utz_date_init(2026, 1, 31),
 		.time = { .hour = 23, .minute = 0, .second = 0 }
 	};
 	off = (uoffset_t){ .hours = 2, .minutes = 0 };
@@ -337,13 +337,13 @@ static void test_datetime_adjust(void) {
 
 	// Year rollover (Dec -> Jan)
 	dt = (udatetime_t){
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 12, 31),
+		.date = utz_date_init(2026, 12, 31),
 		.time = { .hour = 23, .minute = 30, .second = 0 }
 	};
 	off = (uoffset_t){ .hours = 1, .minutes = 0 };
 
 	res = utz_udatetime_add(&dt, &off);
-	TEST(res.date.year == UYEAR_FROM_YEAR(2027));
+	TEST(res.date.year == 2027);
 	TEST(res.date.month == 1);
 	TEST(res.date.dayofmonth == 1);
 	TEST(res.time.hour == 0);
@@ -351,7 +351,7 @@ static void test_datetime_adjust(void) {
 
 	// Leap year: Feb 28 -> Feb 29
 	dt = (udatetime_t){
-		.date = utz_date_init(UYEAR_FROM_YEAR(2028), 2, 28),
+		.date = utz_date_init(2028, 2, 28),
 		.time = { .hour = 23, .minute = 30, .second = 0 }
 	};
 	off = (uoffset_t){ .hours = 1, .minutes = 0 };
@@ -362,7 +362,7 @@ static void test_datetime_adjust(void) {
 	TEST(res.time.hour == 0);
 
 	// Leap year: Feb 29 -> Mar 1
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2028), 2, 29);
+	dt.date = utz_date_init(2028, 2, 29);
 	dt.time.hour = 23;
 	dt.time.minute = 0;
 
@@ -374,7 +374,7 @@ static void test_datetime_adjust(void) {
 	TEST(res.time.hour == 1);
 
 	// Leap year: Mar 1 -> Feb 29
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2028), 3, 1);
+	dt.date = utz_date_init(2028, 3, 1);
 	dt.time.hour = 1;
 	dt.time.minute = 0;
 
@@ -386,7 +386,7 @@ static void test_datetime_adjust(void) {
 	TEST(res.time.hour == 23);
 
 	// Normal year: Mar 1 -> Feb 28
-	dt.date = utz_date_init(UYEAR_FROM_YEAR(2027), 3, 1);
+	dt.date = utz_date_init(2027, 3, 1);
 	dt.time.hour = 1;
 	dt.time.minute = 0;
 
@@ -408,7 +408,7 @@ static void test_brazzaville(void) {
 	TEST(strcmp(zone.abrev_formatter, "WAT") == 0);
 
 	udatetime_t dt = {
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 1, 22),
+		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
 			.minute = 22,
@@ -424,7 +424,7 @@ static void test_brazzaville(void) {
 
 static void test_default(void) {
 	udatetime_t dt = {
-		.date = utz_date_init(UYEAR_FROM_YEAR(2026), 6, 22),
+		.date = utz_date_init(2026, 6, 22),
 		.time = {
 			.hour = 12,
 			.minute = 22,

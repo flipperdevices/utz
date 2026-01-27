@@ -1,6 +1,8 @@
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <assert.h>
 
 typedef enum udayofweek_t {
 	UTZ_MONDAY = 1,
@@ -39,12 +41,12 @@ typedef struct utime_t {
  *  @var udate_t::dayofweek day of week (monday = 1, sunday = 7)
  *  @var udate_t::dayofmonth 01-31
  *  @var udate_t::month 01-12
- *  @var udate_t::year 00-99
+ *  @var udate_t::year 2000-2255
  *  @var udate_t::padding unused space to pad to 4 bytes
  *  @var udate_t::raw for comparisons and conversions
  */
 typedef struct udate_t {
-  uint8_t year;       // 00-255 (offset 2000 ???)
+  uint16_t year;       // 2000-2255
   uint8_t month;      // 01-12
   uint8_t dayofmonth; // 01-31
   uint8_t dayofweek;
@@ -56,7 +58,7 @@ typedef struct udatetime_t {
   union {
     udate_t date;
     struct {
-      uint8_t year;
+      uint16_t year;
       uint8_t month;
       uint8_t dayofmonth;
       uint8_t dayofweek;
@@ -71,6 +73,14 @@ typedef struct udatetime_t {
     };
   };
 } udatetime_t;
+
+static_assert(offsetof(udatetime_t, year) == offsetof(udatetime_t, date.year));
+static_assert(offsetof(udatetime_t, month) == offsetof(udatetime_t, date.month));
+static_assert(offsetof(udatetime_t, dayofmonth) == offsetof(udatetime_t, date.dayofmonth));
+static_assert(offsetof(udatetime_t, dayofweek) == offsetof(udatetime_t, date.dayofweek));
+static_assert(offsetof(udatetime_t, hour) == offsetof(udatetime_t, time.hour));
+static_assert(offsetof(udatetime_t, minute) == offsetof(udatetime_t, time.minute));
+static_assert(offsetof(udatetime_t, second) == offsetof(udatetime_t, time.second));
 
 /** @brief timezone offset type */
 typedef struct uoffset_t {
@@ -93,6 +103,17 @@ typedef struct uzone_packed_t {
   uint16_t abrev_formatter;
 } uzone_packed_t;
 
+/** @struct utz_short_year_t
+ *  @brief type-safe short year.
+ *
+ *  @var utz_short_year_t::y years since 2000
+ */
+typedef struct utz_short_year_t {
+  uint8_t y;
+} utz_short_year_t;
+
+static_assert(sizeof(utz_short_year_t) == 1);
+
 /** @struct urule_packed_t
  *  @brief packed rule type, rules for daylight savings time
  *
@@ -113,8 +134,8 @@ typedef struct uzone_packed_t {
  *  @var urule_packed_t::offset_hours (0-3)
  */
 typedef struct urule_packed_t {
-  uint8_t from_year;
-  uint8_t to_year;
+  utz_short_year_t from_year;
+  utz_short_year_t to_year;
   uint8_t on_dayofweek:3;
   uint8_t on_dayofmonth:5;
   uint8_t at_is_local_time:1;

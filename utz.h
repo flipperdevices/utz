@@ -17,24 +17,22 @@
 /**************************************************************************/
 
 #define UYEAR_OFFSET 2000
-#define UYEAR_OFFSET_SEC 946684800
-#define UYEAR_FROM_YEAR(y) (y - UYEAR_OFFSET)
-#define UYEAR_TO_YEAR(y) (y + UYEAR_OFFSET)
-
+#define UYEAR_FROM_YEAR(y) ((utz_short_year_t){(y) - UYEAR_OFFSET})
+#define UYEAR_TO_YEAR(_y) ((_y).y + UYEAR_OFFSET)
 
 /**************************************************************************/
 /*                         datetime functions                             */
 /**************************************************************************/
 
 /** @brief populates udate_t structure, sets day of the week.
- *  @param y year: 1 <= y <= 255 (see UYEAR_FROM_YEAR)
+ *  @param y year 2000 <= y <= 2255
  *  @param m month: 1 <= m <= 12
  *  @param d day: 1 <= d <= 31
  */
-udate_t utz_date_init(uint8_t year, uint8_t month, uint8_t day);
+udate_t utz_date_init(uint16_t year, uint8_t month, uint8_t day);
 
 /** @brief populates udate_t structure, checking input.
- *  @param y year
+ *  @param y year 2000 <= y <= 2255
  *  @param m month: 1 <= m <= 12
  *  @param d day: 1 <= d <= 31
  *  @param[out] date_out result
@@ -62,29 +60,29 @@ uoffset_t utz_offset_neg(const uoffset_t *offset);
 
 /** @brief returns the day of the week for the given year/month/day
  *
- *  @param y year: 1 <= y <= 255 (see UYEAR_FROM_YEAR)
+ *  @param y year 2000 <= y <= 2255
  *  @param m month: 1 <= m <= 12
  *  @param d day: 1 <= d <= 31
  *  @return day of week (Monday = 1, Sunday = 7)
  */
-udayofweek_t utz_dayofweek(uint8_t y, uint8_t m, uint8_t d);
+udayofweek_t utz_dayofweek(uint16_t y, uint8_t m, uint8_t d);
 
 /** @brief returns the day of the week for the given year/month/day, checks input
  *
- *  @param y year: 1 <= y <= 255 (see UYEAR_FROM_YEAR)
+ *  @param y year: 2000 <= y <= 2255
  *  @param m month: 1 <= m <= 12
  *  @param d day: 1 <= d <= 31
  *  @param[out] dow_out resulting day of week (Monday = 1, Sunday = 7)
  *  @return true on success
  */
-bool utz_dayofweek_checked(uint8_t y, uint8_t m, uint8_t d, udayofweek_t* dow_out);
+bool utz_dayofweek_checked(uint16_t y, uint8_t m, uint8_t d, udayofweek_t* dow_out);
 
 /** @brief returns true if the year is a leap year
  *
- *  @param y year: 1 <= y <= 255 (see UYEAR_FROM_YEAR)
+ *  @param y year
  *  @brief true if the year is a leap year
  */
-bool utz_is_leap_year(uint8_t y);
+bool utz_is_leap_year(uint16_t y);
 
 /** @brief returns days needed to get from the "current" day to the desired day of the week.
  *

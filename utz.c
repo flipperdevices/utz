@@ -70,7 +70,7 @@ const uzone_t utz_zone_default = {
  *  @param rule_out pointer for the output unpacked rule
  *  @return void
  */
-static void unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t* rule_out);
+static void unpack_rule(const urule_packed_t* rule_in, utz_short_year_t cur_year, urule_t* rule_out);
 
 /** @brief unpack rules that are active in the current year
  *
@@ -82,7 +82,7 @@ static void unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t
  *  @param rules_out pointer for the output unpacked rules
  *  @return void
  */
-static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint8_t cur_year, urule_t* rules_out);
+static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, utz_short_year_t cur_year, urule_t* rules_out);
 
 /** @brief get the rule that applies at datetime
  *
@@ -103,7 +103,7 @@ static const urule_t* get_active_rule(const uzone_t *zone, const urule_t* rules,
 static void unpack_zone(const uzone_packed_t* zone_in, const char* name, uzone_t* zone_out);
 
 static const uzone_packed_t* last_zone = NULL;
-static uint8_t last_year = 0;
+static uint16_t last_year = 0;
 
 /** @brief cached rules for the zone and year from the last call of utz_get_current_offset */
 static urule_t cached_rules[MAX_CURRENT_RULES];
@@ -120,16 +120,23 @@ static bool ustrneq(const char* string1, const char* string2, uint8_t n) {
   return true;
 }
 
-static uint8_t days_in_month(uint8_t y, uint8_t m);
+static uint8_t days_in_month(uint16_t y, uint8_t m);
 
-udayofweek_t utz_dayofweek(uint8_t y, uint8_t m, uint8_t d) {
+udayofweek_t utz_dayofweek(uint16_t y, uint8_t m, uint8_t d) {
     static const uint8_t dayofweek_table[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
     y -= m < 3;
-    d = ((UYEAR_TO_YEAR(y) + (UYEAR_TO_YEAR(y)/4) - (UYEAR_TO_YEAR(y)/100) + UYEAR_OFFSET/400 + dayofweek_table[m-1] + d) % 7);
+    d = ((y + y / 4 - y / 100 + UYEAR_OFFSET / 400 + dayofweek_table[m - 1] + d) % 7);
     if (d == 0) { return 7; } else { return d; }
 }
 
-bool utz_dayofweek_checked(uint8_t y, uint8_t m, uint8_t d, udayofweek_t* dow_out) {
+udayofweek_t dayofweek_short(utz_short_year_t y, uint8_t m, uint8_t d) {
+  return utz_dayofweek(UYEAR_TO_YEAR(y), m, d);
+}
+
+bool utz_dayofweek_checked(uint16_t y, uint8_t m, uint8_t d, udayofweek_t* dow_out) {
+    if (y < UYEAR_OFFSET || y > UYEAR_OFFSET + 255) {
+      return false;
+    }
     if (m < 1 || m > 12) {
       return false;
     }
@@ -140,20 +147,30 @@ bool utz_dayofweek_checked(uint8_t y, uint8_t m, uint8_t d, udayofweek_t* dow_ou
     return true;
 }
 
-bool utz_is_leap_year(uint8_t y) {
-#if UYEAR_OFFSET == 2000
-  if (y % 4 == 0 && y != 100 && y != 200) {
-#else
-  if ((((UYEAR_TO_YEAR(y) % 4) == 0) && ((UYEAR_TO_YEAR(y) % 100) != 0)) || ((UYEAR_TO_YEAR(y) % 400) == 0)) {
-#endif
-    return true;
-  }
-  return false;
+bool utz_is_leap_year(uint16_t y) {
+  return y % 4 == 0 && (y % 100 != 0 || y % 400 == 0);
 }
 
-static uint8_t days_in_month(uint8_t y, uint8_t m) {
-  static const uint8_t days_in_month_nonleap[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+bool is_leap_year_short(utz_short_year_t y) {
+#if UYEAR_OFFSET == 2000
+  return y.y % 4 == 0 && y.y != 100 && y.y != 200;
+#else
+  return utz_is_leap_year(UYEAR_TO_YEAR(y));
+#endif
+}
+
+static const uint8_t days_in_month_nonleap[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+static uint8_t days_in_month(uint16_t y, uint8_t m) {
   if (m == 2 && utz_is_leap_year(y)) {
+    return days_in_month_nonleap[m] + 1;
+  } else {
+    return days_in_month_nonleap[m];
+  }
+}
+
+static uint8_t days_in_month_short(utz_short_year_t y, uint8_t m) {
+  if (m == 2 && is_leap_year_short(y)) {
     return days_in_month_nonleap[m] + 1;
   } else {
     return days_in_month_nonleap[m];
@@ -252,28 +269,28 @@ udatetime_t utz_udatetime_sub(const udatetime_t* dt, const uoffset_t *offset) {
   return utz_udatetime_add(dt, &neg_offset);
 }
 
-static void unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t* rule_out) {
+static void unpack_rule(const urule_packed_t* rule_in, utz_short_year_t cur_year, urule_t* rule_out) {
   static const char letter_lut[3] = {'-', 'S', 'D'};
 
   udayofweek_t dayofweek_of_first_dayofmonth;
   udayofweek_t first_dayofweek;
   udayofweek_t dayofweek_of_dayofmonth;
 
-  rule_out->datetime.date.year = cur_year;
+  rule_out->datetime.date.year = UYEAR_TO_YEAR(cur_year);
   rule_out->datetime.date.month = 0;
   rule_out->datetime.date.month += rule_in->in_month;
 
   if (rule_in->on_dayofweek == 0) { // format is DOM e.g. 22
     rule_out->datetime.date.dayofmonth = rule_in->on_dayofmonth;
   } else if (rule_in->on_dayofmonth == 0) { // format is lastDOW e.g. lastSun
-    dayofweek_of_first_dayofmonth = utz_dayofweek(cur_year, rule_in->in_month, 1);
+    dayofweek_of_first_dayofmonth = dayofweek_short(cur_year, rule_in->in_month, 1);
     first_dayofweek = utz_next_dayofweek_offset(dayofweek_of_first_dayofmonth, rule_in->on_dayofweek);
     rule_out->datetime.date.dayofmonth = 1 + (7*3) + first_dayofweek;
-    if (rule_out->datetime.date.dayofmonth + 7 <= days_in_month(cur_year, rule_in->in_month)) {
+    if (rule_out->datetime.date.dayofmonth + 7 <= days_in_month_short(cur_year, rule_in->in_month)) {
       rule_out->datetime.date.dayofmonth += 7;
     }
   } else { // format is DOW >= DOM e.g. Sun>=22
-    dayofweek_of_dayofmonth = utz_dayofweek(cur_year, rule_in->in_month, rule_in->on_dayofmonth);
+    dayofweek_of_dayofmonth = dayofweek_short(cur_year, rule_in->in_month, rule_in->on_dayofmonth);
     rule_out->datetime.date.dayofmonth = rule_in->on_dayofmonth + utz_next_dayofweek_offset(
       dayofweek_of_dayofmonth, 
       rule_in->on_dayofweek
@@ -292,7 +309,7 @@ static void unpack_rule(const urule_packed_t* rule_in, uint8_t cur_year, urule_t
   rule_out->offset_hours += rule_in->offset_hours;
 }
 
-static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint8_t cur_year, urule_t* rules_out) {
+static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, utz_short_year_t cur_year, urule_t* rules_out) {
 #ifndef UTZ_GLOBAL_COUNTERS
   uint8_t utz_i;
 #endif
@@ -307,7 +324,7 @@ static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint
     // First lets find the "last" rule of the previous year, for simplification 
     // this assumes that multiple rules don't apply to the same month and
     // that the offset would not change between years (just the day of effect)
-    if (cur_year >= rules_in[utz_i].from_year && cur_year <= rules_in[utz_i].to_year) {
+    if (cur_year.y >= rules_in[utz_i].from_year.y && cur_year.y <= rules_in[utz_i].to_year.y) {
       if (rules_in[utz_i].in_month > rules_in[l].in_month) {
         l = utz_i;
       }
@@ -317,7 +334,7 @@ static void unpack_rules(const urule_packed_t* rules_in, uint8_t num_rules, uint
 
   unpack_rule(&rules_in[l], cur_year, rules_out);
   // We override the "last" rule time of effect to be the start of the current year
-  rules_out->datetime.date.year = cur_year;
+  rules_out->datetime.date.year = UYEAR_TO_YEAR(cur_year);
   rules_out->datetime.date.month = 1;
   rules_out->datetime.date.dayofmonth = 1;
   memset(&rules_out->datetime.time, 0, sizeof(utime_t));
@@ -355,7 +372,7 @@ static const urule_t* get_active_rule(const uzone_t* zone, const urule_t* rules,
 
 char utz_get_current_offset(const uzone_t* zone, const udatetime_t* datetime, uoffset_t* offset) {
   if (last_zone != zone->src || last_year != datetime->date.year) {
-    unpack_rules(zone->rules, zone->rules_len, datetime->date.year, cached_rules);
+    unpack_rules(zone->rules, zone->rules_len, UYEAR_FROM_YEAR(datetime->date.year), cached_rules);
     last_zone = zone->src;
     last_year = datetime->date.year;
   }
@@ -451,7 +468,7 @@ bool utz_udatetime_ge(const udatetime_t* dt1, const udatetime_t* dt2) {
   return utz_udatetime_cmp(dt1, dt2) >= 0;
 }
 
-udate_t utz_date_init(uint8_t year, uint8_t month, uint8_t day) {
+udate_t utz_date_init(uint16_t year, uint8_t month, uint8_t day) {
   udayofweek_t day_of_week = utz_dayofweek(year, month, day);
   return (udate_t){
     .year = year,
@@ -465,12 +482,11 @@ bool utz_date_init_checked(uint16_t year, uint8_t month, uint8_t day, udate_t *d
   if (year < UYEAR_OFFSET || year > UYEAR_OFFSET + 255) {
     return false;
   }
-  uint8_t uyear = UYEAR_FROM_YEAR(year);
   udayofweek_t dow = UTZ_MONDAY;
-  if (!utz_dayofweek_checked(uyear, month, day, &dow)) {
+  if (!utz_dayofweek_checked(year, month, day, &dow)) {
     return false;
   }
-  date_out->year = uyear;
+  date_out->year = year;
   date_out->month = month;
   date_out->dayofmonth = day;
   date_out->dayofweek = dow;
