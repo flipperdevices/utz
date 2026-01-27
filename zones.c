@@ -1,6 +1,6 @@
 #include "utz.h"
 
-const urule_packed_t utz_zone_rules[39] = {
+const utz_rule_packed_t utz_zone_rules[39] = {
 {{  8}, {255}, 7,  1,  1,  2, 0, 1,  4, 0}, // 	AN	2008	max	-	Apr	Sun>=1	2:00s	0	S
 {{  8}, {255}, 7,  1,  1,  2, 0, 2, 10, 1}, // 	AN	2008	max	-	Oct	Sun>=1	2:00s	1:00	D
 {{  8}, {255}, 7,  1,  1,  2, 0, 1,  4, 0}, // 	AS	2008	max	-	Apr	Sun>=1	2:00s	0	S

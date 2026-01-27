@@ -349,9 +349,9 @@ class TimeZoneDatabase(object):
             for rule in sorted(group, key=lambda x: MONTHS.index(x._in)):
                 c_buf.append(rule.pack())
                 idx = idx + 1
-        c_buf[c_buf.index('PLACEHOLDER')] = 'const urule_packed_t utz_zone_rules[%d] = {' % idx
+        c_buf[c_buf.index('PLACEHOLDER')] = 'const utz_rule_packed_t utz_zone_rules[%d] = {' % idx
         c_buf.append('};')
-        h_buf.append('extern const urule_packed_t utz_zone_rules[%d];' % idx)
+        h_buf.append('extern const utz_rule_packed_t utz_zone_rules[%d];' % idx)
 
         return group_idx
 

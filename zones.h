@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern const urule_packed_t utz_zone_rules[39];
+extern const utz_rule_packed_t utz_zone_rules[39];
 extern const char utz_zone_abrevs[213];
 
 #define MAX_ABREV_FORMATTER_LEN 7

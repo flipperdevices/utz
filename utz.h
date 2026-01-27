@@ -24,39 +24,39 @@
 /*                         datetime functions                             */
 /**************************************************************************/
 
-/** @brief populates udate_t structure, sets day of the week.
+/** @brief populates utz_date_t structure, sets day of the week.
  *  @param y year 2000 <= y <= 2255
  *  @param m month: 1 <= m <= 12
  *  @param d day: 1 <= d <= 31
  */
-udate_t utz_date_init(uint16_t year, uint8_t month, uint8_t day);
+utz_date_t utz_date_init(uint16_t year, uint8_t month, uint8_t day);
 
-/** @brief populates udate_t structure, checking input.
+/** @brief populates utz_date_t structure, checking input.
  *  @param y year 2000 <= y <= 2255
  *  @param m month: 1 <= m <= 12
  *  @param d day: 1 <= d <= 31
  *  @param[out] date_out result
  *  @return true on success
  */
-bool utz_date_init_checked(uint16_t year, uint8_t month, uint8_t day, udate_t* date_out);
+bool utz_date_init_checked(uint16_t year, uint8_t month, uint8_t day, utz_date_t* date_out);
 
-/** @brief populates utime_t structure, checking input.
+/** @brief populates utz_time_t structure, checking input.
  *  @param[out] time_out result
  *  @return true on success
  */
-bool utz_time_init_checked(uint8_t hour, uint8_t minute, uint8_t second, utime_t* time_out);
+bool utz_time_init_checked(uint8_t hour, uint8_t minute, uint8_t second, utz_time_t* time_out);
 
-/** @brief initializes uoffset_t
+/** @brief initializes utz_offset_t
  *  @param negative time offset sign, true for negative.
  *  @return normalized offset
  */
-uoffset_t utz_offset_init(bool negative, uint8_t hours, uint8_t minutes);
+utz_offset_t utz_offset_init(bool negative, uint8_t hours, uint8_t minutes);
 
 /** @brief negates an offset
  *
  *  @return negative offset
  */
-uoffset_t utz_offset_neg(const uoffset_t *offset);
+utz_offset_t utz_offset_neg(const utz_offset_t *offset);
 
 /** @brief returns the day of the week for the given year/month/day
  *
@@ -65,7 +65,7 @@ uoffset_t utz_offset_neg(const uoffset_t *offset);
  *  @param d day: 1 <= d <= 31
  *  @return day of week (Monday = 1, Sunday = 7)
  */
-udayofweek_t utz_dayofweek(uint16_t y, uint8_t m, uint8_t d);
+utz_dayofweek_t utz_dayofweek(uint16_t y, uint8_t m, uint8_t d);
 
 /** @brief returns the day of the week for the given year/month/day, checks input
  *
@@ -75,7 +75,7 @@ udayofweek_t utz_dayofweek(uint16_t y, uint8_t m, uint8_t d);
  *  @param[out] dow_out resulting day of week (Monday = 1, Sunday = 7)
  *  @return true on success
  */
-bool utz_dayofweek_checked(uint16_t y, uint8_t m, uint8_t d, udayofweek_t* dow_out);
+bool utz_dayofweek_checked(uint16_t y, uint8_t m, uint8_t d, utz_dayofweek_t* dow_out);
 
 /** @brief returns true if the year is a leap year
  *
@@ -90,7 +90,7 @@ bool utz_is_leap_year(uint16_t y);
  *  @param dayofweek the desired day of the week: 1 <= dayofweek <= 7 (Monday = 1, Sunday = 7)
  *  @return number of days
  */
-uint8_t utz_next_dayofweek_offset(udayofweek_t dayofweek_of_cur, udayofweek_t dayofweek);
+uint8_t utz_next_dayofweek_offset(utz_dayofweek_t dayofweek_of_cur, utz_dayofweek_t dayofweek);
 
 /** @brief returns *dt1 == *dt2
  *
@@ -98,7 +98,7 @@ uint8_t utz_next_dayofweek_offset(udayofweek_t dayofweek_of_cur, udayofweek_t da
  *  @param dt1 pointer to the second datetime
  *  @return *dt1 == *dt2
  */
-bool utz_udatetime_eq(const udatetime_t* dt1, const udatetime_t* dt2);
+bool utz_udatetime_eq(const utz_datetime_t* dt1, const utz_datetime_t* dt2);
 
 /** @brief returns *dt1 < *dt2
  *
@@ -106,7 +106,7 @@ bool utz_udatetime_eq(const udatetime_t* dt1, const udatetime_t* dt2);
  *  @param dt1 pointer to the second datetime
  *  @return *dt1 < *dt2
  */
-bool utz_udatetime_lt(const udatetime_t* dt1, const udatetime_t* dt2);
+bool utz_udatetime_lt(const utz_datetime_t* dt1, const utz_datetime_t* dt2);
 
 /** @brief returns *dt1 <= *dt2
  *
@@ -114,7 +114,7 @@ bool utz_udatetime_lt(const udatetime_t* dt1, const udatetime_t* dt2);
  *  @param dt1 pointer to the second datetime
  *  @return *dt1 <= *dt2
  */
-bool utz_udatetime_le(const udatetime_t* dt1, const udatetime_t* dt2);
+bool utz_udatetime_le(const utz_datetime_t* dt1, const utz_datetime_t* dt2);
 
 /** @brief returns *dt1 > *dt2
  *
@@ -122,7 +122,7 @@ bool utz_udatetime_le(const udatetime_t* dt1, const udatetime_t* dt2);
  *  @param dt1 pointer to the second datetime
  *  @return *dt1 > *dt2
  */
-bool utz_udatetime_gt(const udatetime_t* dt1, const udatetime_t* dt2);
+bool utz_udatetime_gt(const utz_datetime_t* dt1, const utz_datetime_t* dt2);
 
 /** @brief returns *dt1 >= *dt2
  *
@@ -130,27 +130,27 @@ bool utz_udatetime_gt(const udatetime_t* dt1, const udatetime_t* dt2);
  *  @param dt1 pointer to the second datetime
  *  @return *dt1 >= *dt2
  */
-bool utz_udatetime_ge(const udatetime_t* dt1, const udatetime_t* dt2);
+bool utz_udatetime_ge(const utz_datetime_t* dt1, const utz_datetime_t* dt2);
 
 /** @brief compare two datetime objects
  *
  * @return value less than, equal to, or greater than zero - comparison result
  */
-int utz_udatetime_cmp(const udatetime_t* dt1, const udatetime_t* dt2);
+int utz_udatetime_cmp(const utz_datetime_t* dt1, const utz_datetime_t* dt2);
 
 /** @brief add given offset to a datetime
  *
- * @param offset must adhere to uoffset_t contract, otherwise undefined behaviour.
+ * @param offset must adhere to utz_offset_t contract, otherwise undefined behaviour.
  * @return adjusted datetime
  */
-udatetime_t utz_udatetime_add(const udatetime_t* dt, const uoffset_t *offset);
+utz_datetime_t utz_udatetime_add(const utz_datetime_t* dt, const utz_offset_t *offset);
 
 /** @brief subtract given offset to a datetime
  *
- * @param offset must adhere to uoffset_t contract, otherwise undefined behaviour.
+ * @param offset must adhere to utz_offset_t contract, otherwise undefined behaviour.
  * @return adjusted datetime
  */
-udatetime_t utz_udatetime_sub(const udatetime_t* dt, const uoffset_t *offset);
+utz_datetime_t utz_udatetime_sub(const utz_datetime_t* dt, const utz_offset_t *offset);
 
 /**************************************************************************/
 /*                         zone rule functions                            */
@@ -163,7 +163,7 @@ udatetime_t utz_udatetime_sub(const udatetime_t* dt, const uoffset_t *offset);
  *  @param offset offset for zone at datetime
  *  @return abbreviation letter
  */
-char utz_get_current_offset(const uzone_t* zone, const udatetime_t* datetime, uoffset_t* offset);
+char utz_get_current_offset(const utz_zone_t* zone, const utz_datetime_t* datetime, utz_offset_t* offset);
 
 /** @brief lookup a zone via zone_names
  *
@@ -171,7 +171,7 @@ char utz_get_current_offset(const uzone_t* zone, const udatetime_t* datetime, uo
  *  @param zone_out pointer for zone found
  *  @return true if zone was found, false otherwise
  */
-bool utz_get_zone_by_name(const char* name, uzone_t* zone_out);
+bool utz_get_zone_by_name(const char* name, utz_zone_t* zone_out);
 
 /** @brief iterate through timezone names.
  *
@@ -181,16 +181,16 @@ bool utz_get_zone_by_name(const char* name, uzone_t* zone_out);
 const char *utz_next_zone_name(const char *prev);
 
 #ifdef UTZ_MKTIME
-uint32_t utz_mktime(const udatetime_t* dt);
+uint32_t utz_mktime(const utz_datetime_t* dt);
 #endif
 /**************************************************************************/
 /*                                 zones                                  */
 /**************************************************************************/
 
 /** @brief default timezone, UTC. */
-extern const uzone_t utz_zone_default;
+extern const utz_zone_t utz_zone_default;
 
-extern const urule_packed_t utz_zone_rules[];
+extern const utz_rule_packed_t utz_zone_rules[];
 extern const uzone_packed_t utz_zone_defns[];
 extern const char utz_zone_abrevs[];
 extern const char utz_zone_names[];

@@ -31,7 +31,7 @@ static void test_dayofweek(void) {
 }
 
 static void test_cmp(void) {
-	udatetime_t dt1 = {
+	utz_datetime_t dt1 = {
 		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
@@ -39,7 +39,7 @@ static void test_cmp(void) {
 			.second = 18
 		}
 	};
-	udatetime_t dt2 = {
+	utz_datetime_t dt2 = {
 		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
@@ -90,7 +90,7 @@ static void test_offset(void) {
 }
 
 static void test_berlin(void) {
-	uzone_t zone;
+	utz_zone_t zone;
 	// Error handling
 	TEST(!utz_get_zone_by_name("Unknown", &zone));
 
@@ -101,7 +101,7 @@ static void test_berlin(void) {
 	TEST(strcmp(zone.abrev_formatter, "CE%cT") == 0);
 
 	// Winter time
-	udatetime_t dt = {
+	utz_datetime_t dt = {
 		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
@@ -109,7 +109,7 @@ static void test_berlin(void) {
 			.second = 19
 		}
 	};
-	uoffset_t offset;
+	utz_offset_t offset;
 	char c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == '-');
 	TEST(offset.hours == 1);
@@ -149,7 +149,7 @@ static void test_berlin(void) {
 
 static void test_st_johns(void) {
 	// Timezone with negative fractional offset
-	uzone_t zone;
+	utz_zone_t zone;
 	TEST(utz_get_zone_by_name("St Johns", &zone));
 	TEST(strcmp(zone.name, "St Johns") == 0);
 	// Offset -3:30, represented as {-4, 30}
@@ -158,7 +158,7 @@ static void test_st_johns(void) {
 }
 
 static void test_new_york(void) {
-	uzone_t zone;
+	utz_zone_t zone;
 	// Look up by name
 	TEST(utz_get_zone_by_name("New York", &zone));
 	TEST(strcmp(zone.name, "New York") == 0);
@@ -166,7 +166,7 @@ static void test_new_york(void) {
 	TEST(strcmp(zone.abrev_formatter, "E%cT") == 0);
 
 	// Winter time
-	udatetime_t dt = {
+	utz_datetime_t dt = {
 		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
@@ -174,7 +174,7 @@ static void test_new_york(void) {
 			.second = 19
 		}
 	};
-	uoffset_t offset;
+	utz_offset_t offset;
 	char c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == 'S');
 	TEST(offset.hours == -5);
@@ -214,7 +214,7 @@ static void test_new_york(void) {
 }
 
 static void test_auckland(void) {
-	uzone_t zone;
+	utz_zone_t zone;
 	// Look up by name
 	TEST(utz_get_zone_by_name("Auckland", &zone));
 	TEST(strcmp(zone.name, "Auckland") == 0);
@@ -222,7 +222,7 @@ static void test_auckland(void) {
 	TEST(strcmp(zone.abrev_formatter, "NZ%cT") == 0);
 
 	// Summer time
-	udatetime_t dt = {
+	utz_datetime_t dt = {
 		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
@@ -230,7 +230,7 @@ static void test_auckland(void) {
 			.second = 19
 		}
 	};
-	uoffset_t offset;
+	utz_offset_t offset;
 	char c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == 'D');
 	TEST(offset.hours == 13);
@@ -270,15 +270,15 @@ static void test_auckland(void) {
 }
 
 static void test_datetime_adjust(void) {
-	uoffset_t off;
-	udatetime_t dt, res;
+	utz_offset_t off;
+	utz_datetime_t dt, res;
 
 	// Positive offset (same day)
-	dt = (udatetime_t){
+	dt = (utz_datetime_t){
 		.date = utz_date_init(2026, 1, 22),
 		.time = { .hour = 10, .minute = 30, .second = 0 }
 	};
-	off = (uoffset_t){ .hours = 2, .minutes = 15 };
+	off = (utz_offset_t){ .hours = 2, .minutes = 15 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.time.hour == 12);
@@ -286,7 +286,7 @@ static void test_datetime_adjust(void) {
 	TEST(res.date.dayofmonth == 22);
 
 	// Negative offset (same day)
-	off = (uoffset_t){ .hours = -4, .minutes = 50 };
+	off = (utz_offset_t){ .hours = -4, .minutes = 50 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.time.hour == 7);
@@ -295,7 +295,7 @@ static void test_datetime_adjust(void) {
 
 
 	// Minute overflow -> next hour
-	off = (uoffset_t){ .hours = 0, .minutes = 45 };
+	off = (utz_offset_t){ .hours = 0, .minutes = 45 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.time.hour == 11);
@@ -304,7 +304,7 @@ static void test_datetime_adjust(void) {
 	// Day increment (cross midnight)
 	dt.time.hour = 23;
 	dt.time.minute = 50;
-	off = (uoffset_t){ .hours = 0, .minutes = 15 };
+	off = (utz_offset_t){ .hours = 0, .minutes = 15 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.time.hour == 0);
@@ -312,11 +312,11 @@ static void test_datetime_adjust(void) {
 	TEST(res.date.dayofmonth == 23);
 
 	// Day decrement (negative offset)
-	dt = (udatetime_t){
+	dt = (utz_datetime_t){
 		.date = utz_date_init(2026, 1, 22),
 		.time = { .hour = 0, .minute = 10, .second = 0 }
 	};
-	off = (uoffset_t){ .hours = -1, .minutes = 30 };
+	off = (utz_offset_t){ .hours = -1, .minutes = 30 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.time.hour == 23);
@@ -324,11 +324,11 @@ static void test_datetime_adjust(void) {
 	TEST(res.date.dayofmonth == 21);
 
 	// Month rollover (Jan -> Feb)
-	dt = (udatetime_t){
+	dt = (utz_datetime_t){
 		.date = utz_date_init(2026, 1, 31),
 		.time = { .hour = 23, .minute = 0, .second = 0 }
 	};
-	off = (uoffset_t){ .hours = 2, .minutes = 0 };
+	off = (utz_offset_t){ .hours = 2, .minutes = 0 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.time.hour == 1);
@@ -336,11 +336,11 @@ static void test_datetime_adjust(void) {
 	TEST(res.date.dayofmonth == 1);
 
 	// Year rollover (Dec -> Jan)
-	dt = (udatetime_t){
+	dt = (utz_datetime_t){
 		.date = utz_date_init(2026, 12, 31),
 		.time = { .hour = 23, .minute = 30, .second = 0 }
 	};
-	off = (uoffset_t){ .hours = 1, .minutes = 0 };
+	off = (utz_offset_t){ .hours = 1, .minutes = 0 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.date.year == 2027);
@@ -350,11 +350,11 @@ static void test_datetime_adjust(void) {
 	TEST(res.time.minute == 30);
 
 	// Leap year: Feb 28 -> Feb 29
-	dt = (udatetime_t){
+	dt = (utz_datetime_t){
 		.date = utz_date_init(2028, 2, 28),
 		.time = { .hour = 23, .minute = 30, .second = 0 }
 	};
-	off = (uoffset_t){ .hours = 1, .minutes = 0 };
+	off = (utz_offset_t){ .hours = 1, .minutes = 0 };
 
 	res = utz_udatetime_add(&dt, &off);
 	TEST(res.date.month == 2);
@@ -366,7 +366,7 @@ static void test_datetime_adjust(void) {
 	dt.time.hour = 23;
 	dt.time.minute = 0;
 
-	off = (uoffset_t){ .hours = 2, .minutes = 0 };
+	off = (utz_offset_t){ .hours = 2, .minutes = 0 };
 	res = utz_udatetime_add(&dt, &off);
 
 	TEST(res.date.month == 3);
@@ -378,7 +378,7 @@ static void test_datetime_adjust(void) {
 	dt.time.hour = 1;
 	dt.time.minute = 0;
 
-	off = (uoffset_t){ .hours = -2, .minutes = 0 };
+	off = (utz_offset_t){ .hours = -2, .minutes = 0 };
 	res = utz_udatetime_add(&dt, &off);
 
 	TEST(res.date.month == 2);
@@ -390,7 +390,7 @@ static void test_datetime_adjust(void) {
 	dt.time.hour = 1;
 	dt.time.minute = 0;
 
-	off = (uoffset_t){ .hours = -2, .minutes = 0 };
+	off = (utz_offset_t){ .hours = -2, .minutes = 0 };
 	res = utz_udatetime_add(&dt, &off);
 
 	TEST(res.date.month == 2);
@@ -400,14 +400,14 @@ static void test_datetime_adjust(void) {
 
 // No daylight saving time
 static void test_brazzaville(void) {
-	uzone_t zone;
+	utz_zone_t zone;
 	// Look up by name
 	TEST(utz_get_zone_by_name("Brazzaville", &zone));
 	TEST(strcmp(zone.name, "Brazzaville") == 0);
 	TEST(zone.rules_len == 0);
 	TEST(strcmp(zone.abrev_formatter, "WAT") == 0);
 
-	udatetime_t dt = {
+	utz_datetime_t dt = {
 		.date = utz_date_init(2026, 1, 22),
 		.time = {
 			.hour = 12,
@@ -415,7 +415,7 @@ static void test_brazzaville(void) {
 			.second = 19
 		}
 	};
-	uoffset_t offset;
+	utz_offset_t offset;
 	char c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == '-');
 	TEST(offset.hours == 1);
@@ -423,7 +423,7 @@ static void test_brazzaville(void) {
 }
 
 static void test_default(void) {
-	udatetime_t dt = {
+	utz_datetime_t dt = {
 		.date = utz_date_init(2026, 6, 22),
 		.time = {
 			.hour = 12,
@@ -431,13 +431,13 @@ static void test_default(void) {
 			.second = 19
 		}
 	};
-	uoffset_t offset;
+	utz_offset_t offset;
 	char c = utz_get_current_offset(&utz_zone_default, &dt, &offset);
 	TEST(c == '-');
 	TEST(offset.hours == 0);
 	TEST(offset.minutes == 0);
 
-	uzone_t zone;
+	utz_zone_t zone;
 	TEST(utz_get_zone_by_name("Helsinki", &zone));
 	c = utz_get_current_offset(&zone, &dt, &offset);
 	TEST(c == 'S');
@@ -446,7 +446,7 @@ static void test_default(void) {
 }
 
 static void test_checked_fns(void) {
-	udate_t date;
+	utz_date_t date;
 	TEST(!utz_date_init_checked(1999, 1, 22, &date)); // year is too low
 	TEST(!utz_date_init_checked(2300, 1, 22, &date)); // year is too high
 	TEST(!utz_date_init_checked(2026, 13, 22, &date)); // month
@@ -459,7 +459,7 @@ static void test_checked_fns(void) {
 }
 
 static void test_init_offset(void) {
-	uoffset_t off;
+	utz_offset_t off;
 
 	off = utz_offset_init(false, 1, 30);
 	TEST(off.hours == 1);
@@ -479,7 +479,7 @@ static void test_init_offset(void) {
 }
 
 static void test_neg_offset(void) {
-	uoffset_t off, neg;
+	utz_offset_t off, neg;
 
 	off.hours = 1;
 	off.minutes = 20;
