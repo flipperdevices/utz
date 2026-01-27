@@ -420,6 +420,7 @@ bool utz_get_zone_by_name(const char* name, uzone_t* zone_out) {
   const char* zone = utz_zone_names;
   for (utz_k = 0; utz_k < UTZ_NUM_ZONE_NAMES; utz_k++) {
     if (ustrneq(zone, name, UTZ_MAX_ZONE_NAME_LEN)) {
+      const char *name = zone;
       unpack_zone(&utz_zone_defns[advance_and_get_defn_idx(&zone)], name, zone_out);
       return true;
     } else {
