@@ -16,9 +16,9 @@
 /*                              constants                                 */
 /**************************************************************************/
 
-#define UYEAR_OFFSET 2000
-#define UYEAR_FROM_YEAR(y) ((utz_short_year_t){(y) - UYEAR_OFFSET})
-#define UYEAR_TO_YEAR(_y) ((_y).y + UYEAR_OFFSET)
+#define UTZ_YEAR_OFFSET 2000
+#define UTZ_SHORT_YEAR(y) ((utz_short_year_t){(y) - UTZ_YEAR_OFFSET})
+#define UTZ_LONG_YEAR(_y) ((_y).y + UTZ_YEAR_OFFSET)
 
 /**************************************************************************/
 /*                         datetime functions                             */
