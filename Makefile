@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-I. -std=gnu2x -Wall -Wextra -Werror
 DEPS = zones.h
 
 UTZ_DATA_DIR = vendor/tzdata
@@ -35,3 +35,9 @@ example/example: utz.o zones.o examples/example.o
 
 clean:
 	rm -f zones.h zones.c whitelist.txt utz.o zones.o examples/example.o example
+
+test: test/test
+	./test/test
+
+test/test: utz.o zones.o test/test.o
+	$(CC) $(CFLAGS) -o $@ $^ -I.

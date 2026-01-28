@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """ Library for parsing IANA timezone files and performing transformations
 
@@ -8,7 +8,6 @@ eV Quirk
 from collections import OrderedDict
 from datetime import date
 from functools import total_ordering
-from sets import Set
 
 CURRENT_YEAR = date.today().year
 MAX_FMT_LEN = 5
@@ -81,6 +80,9 @@ def parse_h_m(time):
         h, m = time.split(':')
         h = int(h)
         m = int(m)
+        if h < 0:
+            m = 60 - m
+            h -= 1
     else:
         h = int(time)
     return z, h, m
@@ -157,7 +159,7 @@ class Rule(Entry):
             l = 2
 
         # see utz.h for struct definitions
-        return "{%3d, %3d, %d, %2d, %2d, %2d, %d, %d, %2d, %d}, // %s" % (
+        return "{{%3d}, {%3d}, %d, %2d, %2d, %2d, %d, %d, %2d, %d}, // %s" % (
                 _from,                     # years since 2000
                 to,                        # years since 2000
                 on_u,                      # day of week (mon=1) unless 0, then assume format is "dayOfMonth"
@@ -186,7 +188,7 @@ class Zone(Entry):
 
     def pack(self, rule_groups, rule_group_starts, formatters):
         if self.until is not None:
-            print self  # FIXME warnings
+            print(self)  # FIXME warnings
 
         _, h, m = parse_h_m(self.gmtoff)
 
@@ -262,7 +264,7 @@ class TimeZoneDatabase(object):
 
     def strip_historical(self):
         """ Strip out historical rules and zones """
-        rule_group_names = Set()
+        rule_group_names = set()
 
         filtered_rules = []
         for rule in self.rules:
@@ -325,7 +327,7 @@ class TimeZoneDatabase(object):
         self.rules = rules
 
         h_filename = h_filename.upper().replace('.', '_')
-        h_buf = ['#ifndef _%s' % h_filename, '#define _%s' % h_filename, '']
+        h_buf = ['#ifndef _%s' % h_filename, '#define _%s' % h_filename, '', '#include "types.h"', '']
         c_buf = ['#include "utz.h"', '']
         rule_groups = self.rule_groups()
         rule_group_starts = self._pack_rules(rule_groups, c_buf, h_buf)
@@ -347,9 +349,9 @@ class TimeZoneDatabase(object):
             for rule in sorted(group, key=lambda x: MONTHS.index(x._in)):
                 c_buf.append(rule.pack())
                 idx = idx + 1
-        c_buf[c_buf.index('PLACEHOLDER')] = 'const urule_packed_t zone_rules[%d] = {' % idx
+        c_buf[c_buf.index('PLACEHOLDER')] = 'const utz_rule_packed_t utz_zone_rules[%d] = {' % idx
         c_buf.append('};')
-        h_buf.append('const urule_packed_t zone_rules[%d];' % idx)
+        h_buf.append('extern const utz_rule_packed_t utz_zone_rules[%d];' % idx)
 
         return group_idx
 
@@ -368,8 +370,6 @@ class TimeZoneDatabase(object):
         max_char = 0
         for orig_fmt, packed_fmt in packed_formatters.items():
             packed_formatters[orig_fmt]['start'] = total_char
-            if '%' in packed_fmt['fmt']:
-                packed_fmt['fmt'] = packed_fmt['fmt'] % '%c'
             c_buf.append("'%s','\\0'," % "','".join([c for c in packed_fmt['fmt']]))
             total_char += len(packed_fmt['fmt']) + 1
             if len(packed_fmt['fmt']) > max_char:
@@ -377,8 +377,8 @@ class TimeZoneDatabase(object):
 
         c_buf.append('};')
         c_buf.append('')
-        c_buf[c_buf.index('PLACEHOLDER')] = 'const char zone_abrevs[%d] = {' % total_char
-        h_buf.extend(['const char zone_abrevs[%d];' % total_char, ''])
+        c_buf[c_buf.index('PLACEHOLDER')] = 'const char utz_zone_abrevs[%d] = {' % total_char
+        h_buf.extend(['extern const char utz_zone_abrevs[%d];' % total_char, ''])
         h_buf.extend(['#define MAX_ABREV_FORMATTER_LEN %d' % max_char, ''])
 
         for zone in sorted(self.zones):
@@ -387,15 +387,15 @@ class TimeZoneDatabase(object):
                 packed_zones[packed_zone] = [zone]
             else:
                 packed_zones[packed_zone].append(zone)
-            zone_indexes[zone.name] = packed_zones.keys().index(packed_zone)
+            zone_indexes[zone.name] = list(packed_zones.keys()).index(packed_zone)
 
-        c_buf.append('const uzone_packed_t zone_defns[%d] = {' % len(packed_zones))
+        c_buf.append('const uzone_packed_t utz_zone_defns[%d] = {' % len(packed_zones))
         for packed_zone, srcs in packed_zones.items():
             for src_zone in srcs:
                 c_buf.append('// ' + src_zone._src)
             c_buf.append(packed_zone)
         c_buf.append('};')
-        h_buf.append('const uzone_packed_t zone_defns[%d];' % len(packed_zones))
+        h_buf.append('extern const uzone_packed_t utz_zone_defns[%d];' % len(packed_zones))
 
         return zone_indexes
 
@@ -424,7 +424,7 @@ class TimeZoneDatabase(object):
             name = name.replace("-", '')
             name = name.replace(".", '')
             name = name.replace(",", '')
-            h_buf.append(("#define UTZ_" + name.upper() + ' '*(max_len+4-len(name)) + '&zone_defns[%3d]') % index)
+            h_buf.append(("#define UTZ_" + name.upper() + ' '*(max_len+4-len(name)) + '&utz_zone_defns[%3d]') % index)
             name = orig_name.replace('_', ' ')
             for c in name:
                 if c == "'":
@@ -436,7 +436,9 @@ class TimeZoneDatabase(object):
             if len(char) > max_char:
                 max_char = len(char)
             c_buf.append(("%" + str(max_len*5) + "s, %3d, // %s") % ( "'%s'" % "','".join(char), index, name))
-        c_buf[c_buf.index('PLACEHOLDER')] = 'const unsigned char zone_names[%d] = {' % total_char
+        total_char += 1
+        c_buf.append(" " * (max_len * 5 + 4) + "0")
+        c_buf[c_buf.index('PLACEHOLDER')] = 'const char utz_zone_names[%d] = {' % total_char
         c_buf.append('};')
-        h_buf.extend(['', '#define NUM_ZONE_NAMES %d' % len(aliases), '#define MAX_ZONE_NAME_LEN %d' % max_char, ''])
-        h_buf.append('const unsigned char zone_names[%d];' % total_char)
+        h_buf.extend(['', '#define UTZ_NUM_ZONE_NAMES %d' % len(aliases), '#define UTZ_MAX_ZONE_NAME_LEN %d' % max_char, ''])
+        h_buf.append('extern const char utz_zone_names[%d];' % total_char)

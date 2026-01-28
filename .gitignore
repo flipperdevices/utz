@@ -12,3 +12,4 @@
 build
 *.o
 example
+test/test

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ Micro timezone generator
 
 eV Quirk
@@ -9,7 +9,7 @@ import os
 
 from utz import TimeZoneDatabase
 
-DEFAULT_REGIONS = "africa,asia,australasia,backward,europe,northamerica,pacificnew,southamerica"
+DEFAULT_REGIONS = "africa,asia,australasia,backward,europe,northamerica,pacificnew,southamerica,etcetera"
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 H_NAME = 'zones.h'
 C_NAME = 'zones.c'
@@ -18,7 +18,7 @@ C_NAME = 'zones.c'
 @click.option('--dir', '-d', default=os.environ.get('UTZ_DATA_DIR', 'tzdata'), help='Path to tzdata dir.')
 @click.option('--region', '-r', default=os.environ.get('UTZ_REGIONS', DEFAULT_REGIONS).split(','),
               help='Region files included from tzdata dir.', multiple=True)
-@click.option('--include', '-i', default=filter(None, os.environ.get('UTZ_INCLUDES', '').split(',')),
+@click.option('--include', '-i', default=[_f for _f in os.environ.get('UTZ_INCLUDES', '').split(',') if _f],
               help='Additional tz database formated files included (not from tzdata dir).', multiple=True)
 @click.option('--whitelist', '-w',
               default=os.environ.get('UTZ_WHITELIST', 'whitelist.txt'),

@@ -1,0 +1,566 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <utz.h>
+
+#define TEST(v) do { if (!(v)) {\
+				fprintf(stderr, "test failed at line %d\n", __LINE__);\
+				exit(1);\
+				} } while(false)
+
+static void test_leap(void) {
+	TEST(utz_is_leap_year(2000));
+	TEST(utz_is_leap_year(2004));
+	TEST(utz_is_leap_year(2008));
+	TEST(!utz_is_leap_year(2025));
+	TEST(!utz_is_leap_year(2026));
+	TEST(!utz_is_leap_year(2100));
+	TEST(utz_is_leap_year(2104));
+	TEST(utz_is_leap_year(2204));
+	TEST(!utz_is_leap_year(2200));
+}
+
+static void test_dayofweek(void) {
+	TEST(utz_dayofweek(2026, 1, 22) == UTZ_THURSDAY);
+	TEST(utz_dayofweek(2101, 4, 26) == UTZ_TUESDAY);
+	TEST(utz_dayofweek(2054, 5, 17) == UTZ_SUNDAY);
+	TEST(utz_dayofweek(2053, 12, 12) == UTZ_FRIDAY);
+}
+
+static void test_cmp(void) {
+	utz_datetime_t dt1 = {
+		.date = utz_date_init(2026, 1, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 18
+		}
+	};
+	utz_datetime_t dt2 = {
+		.date = utz_date_init(2026, 1, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	TEST(utz_udatetime_cmp(&dt1, &dt1) == 0);
+	TEST(utz_udatetime_cmp(&dt1, &dt2) < 0);
+	dt2 = dt1;
+	dt2.time.minute -= 1;
+	TEST(utz_udatetime_cmp(&dt1, &dt2) > 0);
+
+	dt2 = dt1;
+	dt2.time.hour += 1;
+	TEST(utz_udatetime_cmp(&dt1, &dt2) < 0);
+
+	dt2 = dt1;
+	dt2.time.hour -= 1;
+	TEST(utz_udatetime_cmp(&dt1, &dt2) > 0);
+
+	dt2 = dt1;
+	dt2.date = utz_date_init(2026, 1, 23);
+	TEST(utz_udatetime_cmp(&dt1, &dt2) < 0);
+
+	dt2.date = utz_date_init(2026, 1, 21);
+	TEST(utz_udatetime_cmp(&dt1, &dt2) > 0);
+
+	dt2 = dt1;
+	dt2.date = utz_date_init(2026, 2, 22);
+	TEST(utz_udatetime_cmp(&dt1, &dt2) < 0);
+
+	dt2.date = utz_date_init(2026, 0, 22);
+	TEST(utz_udatetime_cmp(&dt1, &dt2) > 0);
+
+	dt2 = dt1;
+	dt2.date = utz_date_init(2027, 1, 22);
+	TEST(utz_udatetime_cmp(&dt1, &dt2) < 0);
+
+	dt2.date = utz_date_init(2025, 1, 22);
+	TEST(utz_udatetime_cmp(&dt1, &dt2) > 0);
+}
+
+static void test_offset(void) {
+	TEST(utz_next_dayofweek_offset(UTZ_WEDNESDAY, UTZ_FRIDAY) == 2);
+	TEST(utz_next_dayofweek_offset(UTZ_TUESDAY, UTZ_TUESDAY) == 0);
+	TEST(utz_next_dayofweek_offset(UTZ_WEDNESDAY, UTZ_TUESDAY) == 6);
+}
+
+static void test_berlin(void) {
+	utz_zone_t zone;
+	// Error handling
+	TEST(!utz_get_zone_by_name("Unknown", &zone));
+
+	// Look up by name
+	TEST(utz_get_zone_by_name("Berlin", &zone));
+	TEST(strcmp(zone.name, "Berlin") == 0);
+	TEST(zone.rules_len == 2);
+	TEST(strcmp(zone.abrev_formatter, "CE%sT") == 0);
+
+	// Winter time
+	utz_datetime_t dt = {
+		.date = utz_date_init(2026, 1, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	utz_offset_t offset;
+	const char *s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(*s == 0);
+	TEST(offset.hours == 1);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right before switching to summer time
+	dt.date = utz_date_init(2026, 3, 29);
+	dt.time.hour = 0;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(*s == 0);
+	TEST(offset.hours == 1);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right after switching from winter time
+	dt.date = utz_date_init(2026, 3, 29);
+	dt.time.hour = 1;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
+	TEST(offset.hours == 2);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right before switching to winter time
+	dt.date = utz_date_init(2026, 10, 25);
+	dt.time.hour = 0;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
+	TEST(offset.hours == 2);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right after switching from summer time
+	dt.time.hour = 1;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(*s == 0);
+	TEST(offset.hours == 1);
+	TEST(offset.minutes == 0);
+}
+
+static void test_st_johns(void) {
+	// Timezone with negative fractional offset
+	utz_zone_t zone;
+	TEST(utz_get_zone_by_name("St Johns", &zone));
+	TEST(strcmp(zone.name, "St Johns") == 0);
+	// Offset -3:30, represented as {-4, 30}
+	TEST(zone.offset.hours == -4);
+	TEST(zone.offset.minutes == 30);
+}
+
+static void test_new_york(void) {
+	utz_zone_t zone;
+	// Look up by name
+	TEST(utz_get_zone_by_name("New York", &zone));
+	TEST(strcmp(zone.name, "New York") == 0);
+	TEST(zone.rules_len == 2);
+	TEST(strcmp(zone.abrev_formatter, "E%sT") == 0);
+
+	// Winter time
+	utz_datetime_t dt = {
+		.date = utz_date_init(2026, 1, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	utz_offset_t offset;
+	const char *s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
+	TEST(offset.hours == -5);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right before switching to summer time
+	// Switch at 2:00 local time - 7:00 UTC
+	dt.date = utz_date_init(2026, 3, 8);
+	dt.time.hour = 6;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
+	TEST(offset.hours == -5);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right after switching from winter time
+	dt.time.hour = 7;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
+	TEST(offset.hours == -4);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right before switching to winter time
+	// Switch at 2:00 local time - 6:00 UTC
+	dt.date = utz_date_init(2026, 11, 1);
+	dt.time.hour = 5;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
+	TEST(offset.hours == -4);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right after switching from summer time
+	dt.time.hour = 6;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
+	TEST(offset.hours == -5);
+	TEST(offset.minutes == 0);
+}
+
+static void test_auckland(void) {
+	utz_zone_t zone;
+	// Look up by name
+	TEST(utz_get_zone_by_name("Auckland", &zone));
+	TEST(strcmp(zone.name, "Auckland") == 0);
+	TEST(zone.rules_len == 2);
+	TEST(strcmp(zone.abrev_formatter, "NZ%sT") == 0);
+
+	// Summer time
+	utz_datetime_t dt = {
+		.date = utz_date_init(2026, 1, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	utz_offset_t offset;
+	const char *s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
+	TEST(offset.hours == 13);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right before switching to winter time
+	// Switch at 3:00 local time - 14:00 UTC previous day
+	dt.date = utz_date_init(2026, 4, 4);
+	dt.time.hour = 13;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
+	TEST(offset.hours == 13);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right after switching from summer time
+	dt.time.hour = 14;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
+	TEST(offset.hours == 12);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right before switching to summer time
+	// Switch at 2:00 local time - 14:00 UTC previous day
+	dt.date = utz_date_init(2026, 9, 26);
+	dt.time.hour = 13;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
+	TEST(offset.hours == 12);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right after switching from winter time
+	dt.time.hour = 14;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
+	TEST(offset.hours == 13);
+	TEST(offset.minutes == 0);
+}
+
+static void test_datetime_adjust(void) {
+	utz_offset_t off;
+	utz_datetime_t dt, res;
+
+	// Positive offset (same day)
+	dt = (utz_datetime_t){
+		.date = utz_date_init(2026, 1, 22),
+		.time = { .hour = 10, .minute = 30, .second = 0 }
+	};
+	off = (utz_offset_t){ .hours = 2, .minutes = 15 };
+
+	res = utz_udatetime_add(&dt, &off);
+	TEST(res.time.hour == 12);
+	TEST(res.time.minute == 45);
+	TEST(res.date.dayofmonth == 22);
+
+	// Negative offset (same day)
+	off = (utz_offset_t){ .hours = -4, .minutes = 50 };
+
+	res = utz_udatetime_add(&dt, &off);
+	TEST(res.time.hour == 7);
+	TEST(res.time.minute == 20);
+	TEST(res.date.dayofmonth == 22);
+
+
+	// Minute overflow -> next hour
+	off = (utz_offset_t){ .hours = 0, .minutes = 45 };
+
+	res = utz_udatetime_add(&dt, &off);
+	TEST(res.time.hour == 11);
+	TEST(res.time.minute == 15);
+
+	// Day increment (cross midnight)
+	dt.time.hour = 23;
+	dt.time.minute = 50;
+	off = (utz_offset_t){ .hours = 0, .minutes = 15 };
+
+	res = utz_udatetime_add(&dt, &off);
+	TEST(res.time.hour == 0);
+	TEST(res.time.minute == 5);
+	TEST(res.date.dayofmonth == 23);
+
+	// Day decrement (negative offset)
+	dt = (utz_datetime_t){
+		.date = utz_date_init(2026, 1, 22),
+		.time = { .hour = 0, .minute = 10, .second = 0 }
+	};
+	off = (utz_offset_t){ .hours = -1, .minutes = 30 };
+
+	res = utz_udatetime_add(&dt, &off);
+	TEST(res.time.hour == 23);
+	TEST(res.time.minute == 40);
+	TEST(res.date.dayofmonth == 21);
+
+	// Month rollover (Jan -> Feb)
+	dt = (utz_datetime_t){
+		.date = utz_date_init(2026, 1, 31),
+		.time = { .hour = 23, .minute = 0, .second = 0 }
+	};
+	off = (utz_offset_t){ .hours = 2, .minutes = 0 };
+
+	res = utz_udatetime_add(&dt, &off);
+	TEST(res.time.hour == 1);
+	TEST(res.date.month == 2);
+	TEST(res.date.dayofmonth == 1);
+
+	// Year rollover (Dec -> Jan)
+	dt = (utz_datetime_t){
+		.date = utz_date_init(2026, 12, 31),
+		.time = { .hour = 23, .minute = 30, .second = 0 }
+	};
+	off = (utz_offset_t){ .hours = 1, .minutes = 0 };
+
+	res = utz_udatetime_add(&dt, &off);
+	TEST(res.date.year == 2027);
+	TEST(res.date.month == 1);
+	TEST(res.date.dayofmonth == 1);
+	TEST(res.time.hour == 0);
+	TEST(res.time.minute == 30);
+
+	// Leap year: Feb 28 -> Feb 29
+	dt = (utz_datetime_t){
+		.date = utz_date_init(2028, 2, 28),
+		.time = { .hour = 23, .minute = 30, .second = 0 }
+	};
+	off = (utz_offset_t){ .hours = 1, .minutes = 0 };
+
+	res = utz_udatetime_add(&dt, &off);
+	TEST(res.date.month == 2);
+	TEST(res.date.dayofmonth == 29);
+	TEST(res.time.hour == 0);
+
+	// Leap year: Feb 29 -> Mar 1
+	dt.date = utz_date_init(2028, 2, 29);
+	dt.time.hour = 23;
+	dt.time.minute = 0;
+
+	off = (utz_offset_t){ .hours = 2, .minutes = 0 };
+	res = utz_udatetime_add(&dt, &off);
+
+	TEST(res.date.month == 3);
+	TEST(res.date.dayofmonth == 1);
+	TEST(res.time.hour == 1);
+
+	// Leap year: Mar 1 -> Feb 29
+	dt.date = utz_date_init(2028, 3, 1);
+	dt.time.hour = 1;
+	dt.time.minute = 0;
+
+	off = (utz_offset_t){ .hours = -2, .minutes = 0 };
+	res = utz_udatetime_add(&dt, &off);
+
+	TEST(res.date.month == 2);
+	TEST(res.date.dayofmonth == 29);
+	TEST(res.time.hour == 23);
+
+	// Normal year: Mar 1 -> Feb 28
+	dt.date = utz_date_init(2027, 3, 1);
+	dt.time.hour = 1;
+	dt.time.minute = 0;
+
+	off = (utz_offset_t){ .hours = -2, .minutes = 0 };
+	res = utz_udatetime_add(&dt, &off);
+
+	TEST(res.date.month == 2);
+	TEST(res.date.dayofmonth == 28);
+	TEST(res.time.hour == 23);
+}
+
+// No daylight saving time
+static void test_brazzaville(void) {
+	utz_zone_t zone;
+	// Look up by name
+	TEST(utz_get_zone_by_name("Brazzaville", &zone));
+	TEST(strcmp(zone.name, "Brazzaville") == 0);
+	TEST(zone.rules_len == 0);
+	TEST(strcmp(zone.abrev_formatter, "WAT") == 0);
+
+	utz_datetime_t dt = {
+		.date = utz_date_init(2026, 1, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	utz_offset_t offset;
+	const char *s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(*s == 0);
+	TEST(offset.hours == 1);
+	TEST(offset.minutes == 0);
+}
+
+static void test_default(void) {
+	utz_datetime_t dt = {
+		.date = utz_date_init(2026, 6, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	utz_offset_t offset;
+	const char *s = utz_get_current_offset(&utz_zone_default, &dt, &offset);
+	TEST(*s == 0);
+	TEST(offset.hours == 0);
+	TEST(offset.minutes == 0);
+
+	utz_zone_t zone;
+	TEST(utz_get_zone_by_name("Helsinki", &zone));
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
+	TEST(offset.hours == 3);
+	TEST(offset.minutes == 0);
+}
+
+static void test_checked_fns(void) {
+	utz_date_t date;
+	TEST(!utz_date_init_checked(1999, 1, 22, &date)); // year is too low
+	TEST(!utz_date_init_checked(2300, 1, 22, &date)); // year is too high
+	TEST(!utz_date_init_checked(2026, 13, 22, &date)); // month
+	TEST(!utz_date_init_checked(2026, 1, 32, &date)); // day
+	TEST(!utz_date_init_checked(2026, 1, 0, &date)); // day
+	TEST(!utz_date_init_checked(2026, 2, 30, &date)); // day
+	TEST(!utz_date_init_checked(2026, 2, 29, &date)); // day
+	TEST(utz_date_init_checked(2026, 2, 28, &date)); // day ok
+	TEST(utz_date_init_checked(2028, 2, 29, &date)); // day ok
+}
+
+static void test_init_offset(void) {
+	utz_offset_t off;
+
+	off = utz_offset_init(false, 1, 30);
+	TEST(off.hours == 1);
+	TEST(off.minutes == 30);
+
+	off = utz_offset_init(false, 0, 75);
+	TEST(off.hours == 1);
+	TEST(off.minutes == 15);
+
+	off = utz_offset_init(true, 1, 20);
+	TEST(off.hours == -2);
+	TEST(off.minutes == 40);
+
+	off = utz_offset_init(true, 0, 75);
+	TEST(off.hours == -2);
+	TEST(off.minutes == 45);
+}
+
+static void test_neg_offset(void) {
+	utz_offset_t off, neg;
+
+	off.hours = 1;
+	off.minutes = 20;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == -2);
+	TEST(neg.minutes == 40);
+
+	off.hours = -1;
+	off.minutes = 20;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == 0);
+	TEST(neg.minutes == 40);
+
+	off.hours = 1;
+	off.minutes = 0;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == -1);
+	TEST(neg.minutes == 0);
+
+	off.hours = -2;
+	off.minutes = 0;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == 2);
+	TEST(neg.minutes == 0);
+
+	off.hours = 0;
+	off.minutes = 15;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == -1);
+	TEST(neg.minutes == 45);
+
+	off.hours = -1;
+	off.minutes = 15;
+	neg = utz_offset_neg(&off);
+	TEST(neg.hours == 0);
+	TEST(neg.minutes == 45);
+}
+
+static void test_offset_cmp(void) {
+	utz_offset_t off1, off2;
+
+	off1 = utz_offset_init(false, 0, 30);
+	off2 = utz_offset_init(false, 1, 30);
+	TEST(utz_offset_cmp(&off1, &off2) < 0);
+
+	off1 = utz_offset_init(false, 0, 30);
+	off2 = utz_offset_init(false, 0, 20);
+	TEST(utz_offset_cmp(&off1, &off2) > 0);
+
+	off1 = utz_offset_init(false, 0, 30);
+	off2 = utz_offset_init(false, 0, 30);
+	TEST(utz_offset_cmp(&off1, &off2) == 0);
+
+	off1 = utz_offset_init(true, 0, 30);
+	off2 = utz_offset_init(true, 1, 30);
+	TEST(utz_offset_cmp(&off1, &off2) > 0);
+
+	off1 = utz_offset_init(true, 0, 30);
+	off2 = utz_offset_init(true, 0, 20);
+	TEST(utz_offset_cmp(&off1, &off2) < 0);
+
+	off1 = utz_offset_init(true, 1, 30);
+	off2 = utz_offset_init(true, 2, 30);
+	TEST(utz_offset_cmp(&off1, &off2) > 0);
+}
+
+int main(void) {
+	test_leap();
+	test_dayofweek();
+	test_cmp();
+	test_offset();
+	test_datetime_adjust();
+	test_berlin();
+	test_st_johns();
+	test_new_york();
+	test_auckland();
+	test_brazzaville();
+	test_default();
+	test_checked_fns();
+	test_init_offset();
+	test_neg_offset();
+	test_offset_cmp();
+	return 0;
+}

@@ -27,6 +27,18 @@ packing all possible syntax of the source IANA tz database.
 Instead a subset corresponding to the what is needed to correctly parse  
 most zones is implemented.
 
+## Updating timezone database
+
+1. Install python requirements:
+	`pip3 install -r requirements.txt`
+2. If necessary, update vendor files in vendor/android, vendor/wikipedia, and vendor/tzdata
+3. Compile timezone links. To do that you need a [GeoNames](https://www.geonames.org/) username:
+	`./utils/compile_tzlinks.py -u <username>`
+4. Compile whitelisted timezones from the Android file:
+	`./utils/compile_whitelist.py`
+5. Finally, generate the database:
+	`./utils/generate_zones.py -d vendor/tzdata -w whitelist.txt -i majormetros`
+
 ## Links
 
 [zic man page and IANA tz database format documentation](https://linux.die.net/man/8/zic)

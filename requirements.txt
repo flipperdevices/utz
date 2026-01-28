@@ -1,4 +1,13 @@
-BeautifulSoup
-click
-geopy
-tzwhere
+appdirs==1.4.4
+beautifulsoup4==4.14.3
+click==8.3.1
+fissix==24.4.24
+geographiclib==2.1
+geopy==2.4.1
+modernize==0.8.0
+numpy==2.4.1
+pytz==2025.2
+shapely==2.1.2
+soupsieve==2.8.3
+typing_extensions==4.15.0
+tzwhere==3.0.3
