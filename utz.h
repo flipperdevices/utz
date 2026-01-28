@@ -20,6 +20,8 @@
 #define UTZ_SHORT_YEAR(y) ((utz_short_year_t){(y) - UTZ_YEAR_OFFSET})
 #define UTZ_LONG_YEAR(_y) ((_y).y + UTZ_YEAR_OFFSET)
 
+extern const size_t utz_num_zone_names;
+
 /**************************************************************************/
 /*                         datetime functions                             */
 /**************************************************************************/

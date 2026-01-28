@@ -63,6 +63,8 @@ const utz_zone_t utz_zone_default = {
   .src = NULL,
 };
 
+const size_t utz_num_zone_names = UTZ_NUM_ZONE_NAMES;
+
 /** @brief unpack rule
  *
  *  @param rule_in pointer to packed rule
