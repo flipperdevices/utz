@@ -11,7 +11,7 @@
 #include "utz.h"
 #include "zones.h"
 
-#define RULE_IS_VALID(r) ((r).letter != 0)
+#define RULE_IS_VALID(r) ((r).letters != 0)
 #define OFFSET_INCREMENT 15 // Minutes
 
 #define MAX_CURRENT_RULES 4 + 1
@@ -281,7 +281,7 @@ utz_datetime_t utz_udatetime_sub(const utz_datetime_t* dt, const utz_offset_t *o
 }
 
 static void unpack_rule(const utz_rule_packed_t* rule_in, utz_short_year_t cur_year, utz_rule_t* rule_out) {
-  static const char letter_lut[3] = {'-', 'S', 'D'};
+  static const char * const letter_lut[3] = {"", "S", "D"};
 
   utz_dayofweek_t dayofweek_of_first_dayofmonth;
   utz_dayofweek_t first_dayofweek;
@@ -314,7 +314,7 @@ static void unpack_rule(const utz_rule_packed_t* rule_in, utz_short_year_t cur_y
   rule_out->datetime.time.minute += rule_in->at_inc_minutes * OFFSET_INCREMENT;
   rule_out->is_local_time = rule_in->at_is_local_time != 0;
 
-  rule_out->letter = letter_lut[rule_in->letter];
+  rule_out->letters = letter_lut[rule_in->letter];
 
   rule_out->offset_hours = 0;
   rule_out->offset_hours += rule_in->offset_hours;
@@ -381,7 +381,7 @@ static const utz_rule_t* get_active_rule(const utz_zone_t* zone, const utz_rule_
   return &rules[MAX_CURRENT_RULES-1];
 }
 
-char utz_get_current_offset(const utz_zone_t* zone, const utz_datetime_t* datetime, utz_offset_t* offset) {
+const char *utz_get_current_offset(const utz_zone_t* zone, const utz_datetime_t* datetime, utz_offset_t* offset) {
   if (last_zone != zone->src || last_year != datetime->date.year) {
     unpack_rules(zone->rules, zone->rules_len, UTZ_SHORT_YEAR(datetime->date.year), cached_rules);
     last_zone = zone->src;
@@ -393,9 +393,9 @@ char utz_get_current_offset(const utz_zone_t* zone, const utz_datetime_t* dateti
   const utz_rule_t *rule = get_active_rule(zone, cached_rules, datetime);
   if (rule) {
     offset->hours += rule->offset_hours;
-    return rule->letter;
+    return rule->letters;
   } else {
-    return '-';
+    return "";
   }
 }
 

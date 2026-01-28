@@ -98,7 +98,7 @@ static void test_berlin(void) {
 	TEST(utz_get_zone_by_name("Berlin", &zone));
 	TEST(strcmp(zone.name, "Berlin") == 0);
 	TEST(zone.rules_len == 2);
-	TEST(strcmp(zone.abrev_formatter, "CE%cT") == 0);
+	TEST(strcmp(zone.abrev_formatter, "CE%sT") == 0);
 
 	// Winter time
 	utz_datetime_t dt = {
@@ -110,39 +110,39 @@ static void test_berlin(void) {
 		}
 	};
 	utz_offset_t offset;
-	char c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == '-');
+	const char *s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(*s == 0);
 	TEST(offset.hours == 1);
 	TEST(offset.minutes == 0);
 
 	// Winter time, right before switching to summer time
 	dt.date = utz_date_init(2026, 3, 29);
 	dt.time.hour = 0;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == '-');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(*s == 0);
 	TEST(offset.hours == 1);
 	TEST(offset.minutes == 0);
 
 	// Summer time, right after switching from winter time
 	dt.date = utz_date_init(2026, 3, 29);
 	dt.time.hour = 1;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'S');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
 	TEST(offset.hours == 2);
 	TEST(offset.minutes == 0);
 
 	// Summer time, right before switching to winter time
 	dt.date = utz_date_init(2026, 10, 25);
 	dt.time.hour = 0;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'S');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
 	TEST(offset.hours == 2);
 	TEST(offset.minutes == 0);
 
 	// Winter time, right after switching from summer time
 	dt.time.hour = 1;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == '-');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(*s == 0);
 	TEST(offset.hours == 1);
 	TEST(offset.minutes == 0);
 }
@@ -163,7 +163,7 @@ static void test_new_york(void) {
 	TEST(utz_get_zone_by_name("New York", &zone));
 	TEST(strcmp(zone.name, "New York") == 0);
 	TEST(zone.rules_len == 2);
-	TEST(strcmp(zone.abrev_formatter, "E%cT") == 0);
+	TEST(strcmp(zone.abrev_formatter, "E%sT") == 0);
 
 	// Winter time
 	utz_datetime_t dt = {
@@ -175,8 +175,8 @@ static void test_new_york(void) {
 		}
 	};
 	utz_offset_t offset;
-	char c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'S');
+	const char *s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
 	TEST(offset.hours == -5);
 	TEST(offset.minutes == 0);
 
@@ -184,15 +184,15 @@ static void test_new_york(void) {
 	// Switch at 2:00 local time - 7:00 UTC
 	dt.date = utz_date_init(2026, 3, 8);
 	dt.time.hour = 6;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'S');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
 	TEST(offset.hours == -5);
 	TEST(offset.minutes == 0);
 
 	// Summer time, right after switching from winter time
 	dt.time.hour = 7;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'D');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
 	TEST(offset.hours == -4);
 	TEST(offset.minutes == 0);
 
@@ -200,15 +200,15 @@ static void test_new_york(void) {
 	// Switch at 2:00 local time - 6:00 UTC
 	dt.date = utz_date_init(2026, 11, 1);
 	dt.time.hour = 5;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'D');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
 	TEST(offset.hours == -4);
 	TEST(offset.minutes == 0);
 
 	// Winter time, right after switching from summer time
 	dt.time.hour = 6;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'S');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
 	TEST(offset.hours == -5);
 	TEST(offset.minutes == 0);
 }
@@ -219,7 +219,7 @@ static void test_auckland(void) {
 	TEST(utz_get_zone_by_name("Auckland", &zone));
 	TEST(strcmp(zone.name, "Auckland") == 0);
 	TEST(zone.rules_len == 2);
-	TEST(strcmp(zone.abrev_formatter, "NZ%cT") == 0);
+	TEST(strcmp(zone.abrev_formatter, "NZ%sT") == 0);
 
 	// Summer time
 	utz_datetime_t dt = {
@@ -231,8 +231,8 @@ static void test_auckland(void) {
 		}
 	};
 	utz_offset_t offset;
-	char c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'D');
+	const char *s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
 	TEST(offset.hours == 13);
 	TEST(offset.minutes == 0);
 
@@ -240,15 +240,15 @@ static void test_auckland(void) {
 	// Switch at 3:00 local time - 14:00 UTC previous day
 	dt.date = utz_date_init(2026, 4, 4);
 	dt.time.hour = 13;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'D');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
 	TEST(offset.hours == 13);
 	TEST(offset.minutes == 0);
 
 	// Winter time, right after switching from summer time
 	dt.time.hour = 14;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'S');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
 	TEST(offset.hours == 12);
 	TEST(offset.minutes == 0);
 
@@ -256,15 +256,15 @@ static void test_auckland(void) {
 	// Switch at 2:00 local time - 14:00 UTC previous day
 	dt.date = utz_date_init(2026, 9, 26);
 	dt.time.hour = 13;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'S');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
 	TEST(offset.hours == 12);
 	TEST(offset.minutes == 0);
 
 	// Summer time, right after switching from winter time
 	dt.time.hour = 14;
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'D');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "D") == 0);
 	TEST(offset.hours == 13);
 	TEST(offset.minutes == 0);
 }
@@ -416,8 +416,8 @@ static void test_brazzaville(void) {
 		}
 	};
 	utz_offset_t offset;
-	char c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == '-');
+	const char *s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(*s == 0);
 	TEST(offset.hours == 1);
 	TEST(offset.minutes == 0);
 }
@@ -432,15 +432,15 @@ static void test_default(void) {
 		}
 	};
 	utz_offset_t offset;
-	char c = utz_get_current_offset(&utz_zone_default, &dt, &offset);
-	TEST(c == '-');
+	const char *s = utz_get_current_offset(&utz_zone_default, &dt, &offset);
+	TEST(*s == 0);
 	TEST(offset.hours == 0);
 	TEST(offset.minutes == 0);
 
 	utz_zone_t zone;
 	TEST(utz_get_zone_by_name("Helsinki", &zone));
-	c = utz_get_current_offset(&zone, &dt, &offset);
-	TEST(c == 'S');
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "S") == 0);
 	TEST(offset.hours == 3);
 	TEST(offset.minutes == 0);
 }

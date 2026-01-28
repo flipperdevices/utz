@@ -160,6 +160,6 @@ typedef struct utz_zone_t {
 typedef struct utz_rule_t {
   utz_datetime_t datetime;
   bool is_local_time;
-  char letter;
+  const char *letters;
   uint8_t offset_hours;
 } utz_rule_t;

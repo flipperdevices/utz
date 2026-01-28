@@ -370,8 +370,6 @@ class TimeZoneDatabase(object):
         max_char = 0
         for orig_fmt, packed_fmt in packed_formatters.items():
             packed_formatters[orig_fmt]['start'] = total_char
-            if '%' in packed_fmt['fmt']:
-                packed_fmt['fmt'] = packed_fmt['fmt'] % '%c'
             c_buf.append("'%s','\\0'," % "','".join([c for c in packed_fmt['fmt']]))
             total_char += len(packed_fmt['fmt']) + 1
             if len(packed_fmt['fmt']) > max_char:

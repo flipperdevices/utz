@@ -169,9 +169,9 @@ utz_datetime_t utz_udatetime_sub(const utz_datetime_t* dt, const utz_offset_t *o
  *  @param zone pointer to zone
  *  @param datetime the datetime (UTC) to check rules for
  *  @param offset offset for zone at datetime
- *  @return abbreviation letter
+ *  @return abbreviation letters string
  */
-char utz_get_current_offset(const utz_zone_t* zone, const utz_datetime_t* datetime, utz_offset_t* offset);
+const char *utz_get_current_offset(const utz_zone_t* zone, const utz_datetime_t* datetime, utz_offset_t* offset);
 
 /** @brief lookup a zone via zone_names
  *
