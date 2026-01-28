@@ -14,7 +14,7 @@
 #define RULE_IS_VALID(r) ((r).letter != 0)
 #define OFFSET_INCREMENT 15 // Minutes
 
-#define MAX_CURRENT_RULES 4 + 1 // Fuck Morocco
+#define MAX_CURRENT_RULES 4 + 1
 
 #define DAYS_IN_LEAP_YEAR 366
 
