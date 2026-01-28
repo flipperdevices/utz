@@ -518,6 +518,34 @@ static void test_neg_offset(void) {
 	TEST(neg.minutes == 45);
 }
 
+static void test_offset_cmp(void) {
+	utz_offset_t off1, off2;
+
+	off1 = utz_offset_init(false, 0, 30);
+	off2 = utz_offset_init(false, 1, 30);
+	TEST(utz_offset_cmp(&off1, &off2) < 0);
+
+	off1 = utz_offset_init(false, 0, 30);
+	off2 = utz_offset_init(false, 0, 20);
+	TEST(utz_offset_cmp(&off1, &off2) > 0);
+
+	off1 = utz_offset_init(false, 0, 30);
+	off2 = utz_offset_init(false, 0, 30);
+	TEST(utz_offset_cmp(&off1, &off2) == 0);
+
+	off1 = utz_offset_init(true, 0, 30);
+	off2 = utz_offset_init(true, 1, 30);
+	TEST(utz_offset_cmp(&off1, &off2) > 0);
+
+	off1 = utz_offset_init(true, 0, 30);
+	off2 = utz_offset_init(true, 0, 20);
+	TEST(utz_offset_cmp(&off1, &off2) < 0);
+
+	off1 = utz_offset_init(true, 1, 30);
+	off2 = utz_offset_init(true, 2, 30);
+	TEST(utz_offset_cmp(&off1, &off2) > 0);
+}
+
 int main(void) {
 	test_leap();
 	test_dayofweek();
@@ -533,5 +561,6 @@ int main(void) {
 	test_checked_fns();
 	test_init_offset();
 	test_neg_offset();
+	test_offset_cmp();
 	return 0;
 }

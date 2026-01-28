@@ -140,6 +140,12 @@ bool utz_udatetime_ge(const utz_datetime_t* dt1, const utz_datetime_t* dt2);
  */
 int utz_udatetime_cmp(const utz_datetime_t* dt1, const utz_datetime_t* dt2);
 
+/** @brief compare two offset objects
+ *
+ * @return value less than, equal to, or greater than zero - comparison result
+ */
+int utz_offset_cmp(const utz_offset_t* dt1, const utz_offset_t* dt2);
+
 /** @brief add given offset to a datetime
  *
  * @param offset must adhere to utz_offset_t contract, otherwise undefined behaviour.

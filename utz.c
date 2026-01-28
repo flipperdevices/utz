@@ -194,6 +194,15 @@ int utz_udatetime_cmp(const utz_datetime_t* dt1, const utz_datetime_t* dt2) {
   return 0;
 }
 
+int utz_offset_cmp(const utz_offset_t* dt1, const utz_offset_t* dt2) {
+  int ret;
+  ret = dt1->hours - dt2->hours;
+  if (ret != 0) {
+    return ret;
+  }
+  return dt1->minutes - dt2->minutes;
+}
+
 static void udate_dec(utz_date_t *date) {
   date->dayofweek -= 1;
   if (date->dayofweek == 0) {
