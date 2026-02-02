@@ -708,7 +708,7 @@ Rule	Tonga	2017	max	-	Jan	Sun>=15	3:00	0	-
 Zone Pacific/Tongatapu	12:19:20 -	LMT	1901
 			12:20	-	+1220	1941
 			13:00	-	+13	1999
-			13:00	Tonga	+13/+14
+			13:00	Tonga	TO%sT
 
 # Tuvalu
 # Zone	NAME		GMTOFF	RULES	FORMAT	[UNTIL]
