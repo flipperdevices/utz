@@ -42,7 +42,7 @@ const utz_rule_packed_t utz_zone_rules[39] = {
 {{ 13}, {255}, 7,  0,  1,  1, 0, 1, 10, 0}, // 	Zion	2013	max	-	Oct	lastSun	2:00	0	S
 };
 
-const char utz_zone_abrevs[213] = {
+const char utz_zone_abrevs[209] = {
 'E','E','S','T','\0',
 'W','A','T','\0',
 'C','A','T','\0',
@@ -81,7 +81,7 @@ const char utz_zone_abrevs[213] = {
 'C','E','%','s','T','\0',
 'E','E','%','s','T','\0',
 '+','0','3','\0',
-'G','M','T','/','B','S','T','\0',
+'G','M','T','\0',
 'M','S','K','\0',
 'N','Z','%','s','T','\0',
 'C','h','S','T','\0',
@@ -177,18 +177,18 @@ const uzone_packed_t utz_zone_defns[47] = {
 {  8,  17,   2, 172},
 // Europe/Istanbul	3:00	-	+03
 { 12,   0,   0, 178},
-// Europe/London	0:00	EU	GMT/BST
+// Europe/London	0:00	EU	GMT
 {  0,  17,   2, 182},
 // Europe/Moscow	3:00	-	MSK
-{ 12,   0,   0, 190},
+{ 12,   0,   0, 186},
 // Pacific/Auckland	12:00	NZ	NZ%sT
-{ 48,  33,   2, 194},
+{ 48,  33,   2, 190},
 // Pacific/Guam	10:00	-	ChST
-{ 40,   0,   0, 200},
+{ 40,   0,   0, 196},
 // Pacific/Honolulu	-10:00	-	HST
-{-40,   0,   0, 205},
+{-40,   0,   0, 201},
 // Pacific/Pago_Pago	-11:00	-	SST
-{-44,   0,   0, 209},
+{-44,   0,   0, 205},
 };
 
 const char utz_zone_names[972] = {

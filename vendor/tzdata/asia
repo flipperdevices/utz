@@ -120,7 +120,7 @@ Zone	Asia/Yerevan	2:58:00 -	LMT	1924 May  2
 			4:00 RussiaAsia +04/+05	1991 Mar 31  2:00s
 			3:00 RussiaAsia	+03/+04	1995 Sep 24  2:00s
 			4:00	-	+04	1997
-			4:00 RussiaAsia	+04/+05
+			4:00 RussiaAsia	AMT
 
 # Azerbaijan
 
@@ -146,7 +146,7 @@ Zone	Asia/Baku	3:19:24 -	LMT	1924 May  2
 			3:00 RussiaAsia	+03/+04	1992 Sep lastSun  2:00s
 			4:00	-	+04	1996
 			4:00	EUAsia	+04/+05	1997
-			4:00	Azer	+04/+05
+			4:00	Azer	AZT
 
 # Bahrain
 # See Asia/Qatar.
@@ -853,7 +853,7 @@ Zone	Asia/Tbilisi	2:59:11 -	LMT	1880
 			4:00	1:00	+05	1997 Mar lastSun
 			4:00 E-EurAsia	+04/+05	2004 Jun 27
 			3:00 RussiaAsia	+03/+04	2005 Mar lastSun  2:00
-			4:00	-	+04
+			4:00	-	GET
 
 # East Timor
 
@@ -1754,7 +1754,8 @@ Zone	Asia/Almaty	5:07:48 -	LMT	1924 May  2 # or Alma-Ata
 			6:00 RussiaAsia +06/+07	1991 Mar 31  2:00s
 			5:00 RussiaAsia	+05/+06	1992 Jan 19  2:00s
 			6:00 RussiaAsia	+06/+07	2004 Oct 31  2:00s
-			6:00	-	+06
+			6:00	-	+06	2024 Mar 01  2:00s
+			5:00	-	KZT
 # Qyzylorda (aka Kyzylorda, Kizilorda, Kzyl-Orda, etc.) (KZ-KZY)
 # This currently includes Qostanay (aka Kostanay, Kustanay) (KZ-KUS);
 # see comments below.
@@ -1768,7 +1769,8 @@ Zone	Asia/Qyzylorda	4:21:52 -	LMT	1924 May  2
 			5:00 RussiaAsia	+05/+06	1992 Jan 19  2:00s
 			6:00 RussiaAsia	+06/+07	1992 Mar 29  2:00s
 			5:00 RussiaAsia	+05/+06	2004 Oct 31  2:00s
-			6:00	-	+06
+			6:00	-	+06	2024 Mar 01  2:00s
+			5:00	-	KZT
 # The following zone is like Asia/Qyzylorda except for being one
 # hour earlier from 1991-09-29 to 1992-03-29.  The 1991/2 rules for
 # Qostenay are unclear partly because of the 1997 Turgai
@@ -1792,7 +1794,8 @@ Zone	Asia/Aqtobe	3:48:40	-	LMT	1924 May  2
 			5:00 RussiaAsia	+05/+06	1991 Mar 31  2:00s
 			4:00 RussiaAsia	+04/+05	1992 Jan 19  2:00s
 			5:00 RussiaAsia	+05/+06	2004 Oct 31  2:00s
-			5:00	-	+05
+			5:00	-	+05	2024 Mar 01  2:00s
+			5:00	-	KZT
 # Mangghystaū (KZ-MAN)
 # Aqtau was not founded until 1963, but it represents an inhabited region,
 # so include time stamps before 1963.
@@ -1804,7 +1807,8 @@ Zone	Asia/Aqtau	3:21:04	-	LMT	1924 May  2
 			4:00 RussiaAsia	+04/+05	1992 Jan 19  2:00s
 			5:00 RussiaAsia	+05/+06	1994 Sep 25  2:00s
 			4:00 RussiaAsia	+04/+05	2004 Oct 31  2:00s
-			5:00	-	+05
+			5:00	-	+05	2024 Mar 01  2:00s
+			5:00	-	KZT
 # Atyraū (KZ-ATY) is like Mangghystaū except it switched from
 # +04/+05 to +05/+06 in spring 1999, not fall 1994.
 Zone	Asia/Atyrau	3:27:44	-	LMT	1924 May  2
@@ -1815,7 +1819,8 @@ Zone	Asia/Atyrau	3:27:44	-	LMT	1924 May  2
 			4:00 RussiaAsia	+04/+05	1992 Jan 19  2:00s
 			5:00 RussiaAsia	+05/+06	1999 Mar 28  2:00s
 			4:00 RussiaAsia	+04/+05	2004 Oct 31  2:00s
-			5:00	-	+05
+			5:00	-	+05	2024 Mar 01  2:00s
+			5:00	-	KZT
 # West Kazakhstan (KZ-ZAP)
 # From Paul Eggert (2016-03-18):
 # The 1989 transition is from USSR act No. 227 (1989-03-14).
@@ -1828,7 +1833,8 @@ Zone	Asia/Oral	3:25:24	-	LMT	1924 May  2 # or Ural'sk
 			4:00 RussiaAsia	+04/+05	1992 Jan 19  2:00s
 			5:00 RussiaAsia	+05/+06	1992 Mar 29  2:00s
 			4:00 RussiaAsia	+04/+05	2004 Oct 31  2:00s
-			5:00	-	+05
+			5:00	-	+05	2024 Mar 01  2:00s
+			5:00	-	KZT
 
 # Kyrgyzstan (Kirgizstan)
 # Transitions through 1991 are from Shanks & Pottenger.
@@ -1853,7 +1859,7 @@ Zone	Asia/Bishkek	4:58:24 -	LMT	1924 May  2
 			6:00 RussiaAsia +06/+07	1991 Mar 31  2:00s
 			5:00 RussiaAsia	+05/+06	1991 Aug 31  2:00
 			5:00	Kyrgyz	+05/+06	2005 Aug 12
-			6:00	-	+06
+			6:00	-	KGT
 
 ###############################################################################
 
@@ -2801,7 +2807,7 @@ Zone	Asia/Colombo	5:19:24 -	LMT	1880
 			5:30	-	+0530	1996 May 25  0:00
 			6:30	-	+0630	1996 Oct 26  0:30
 			6:00	-	+06	2006 Apr 15  0:30
-			5:30	-	+0530
+			5:30	-	SLST
 
 # Syria
 # Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
@@ -2973,7 +2979,7 @@ Zone	Asia/Dushanbe	4:35:12 -	LMT	1924 May  2
 			5:00	-	+05	1930 Jun 21
 			6:00 RussiaAsia +06/+07	1991 Mar 31  2:00s
 			5:00	1:00	+05/+06	1991 Sep  9  2:00s
-			5:00	-	+05
+			5:00	-	TJT
 
 # Thailand
 # Zone	NAME		GMTOFF	RULES	FORMAT	[UNTIL]
@@ -2990,7 +2996,7 @@ Zone	Asia/Ashgabat	3:53:32 -	LMT	1924 May  2 # or Ashkhabad
 			4:00	-	+04	1930 Jun 21
 			5:00 RussiaAsia	+05/+06	1991 Mar 31  2:00
 			4:00 RussiaAsia	+04/+05	1992 Jan 19  2:00
-			5:00	-	+05
+			5:00	-	TMT
 
 # United Arab Emirates
 # Zone	NAME		GMTOFF	RULES	FORMAT	[UNTIL]
@@ -3007,13 +3013,13 @@ Zone	Asia/Samarkand	4:27:53 -	LMT	1924 May  2
 			5:00	1:00	+06	1981 Oct  1
 			6:00	-	+06	1982 Apr  1
 			5:00 RussiaAsia	+05/+06	1992
-			5:00	-	+05
+			5:00	-	UZT
 # Milne says Tashkent was 4:37:10.8; round to nearest.
 Zone	Asia/Tashkent	4:37:11 -	LMT	1924 May  2
 			5:00	-	+05	1930 Jun 21
 			6:00 RussiaAsia	+06/+07	1991 Mar 31  2:00
 			5:00 RussiaAsia	+05/+06	1992
-			5:00	-	+05
+			5:00	-	UZT
 
 # Vietnam
 

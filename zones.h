@@ -4,9 +4,9 @@
 #include "types.h"
 
 extern const utz_rule_packed_t utz_zone_rules[39];
-extern const char utz_zone_abrevs[213];
+extern const char utz_zone_abrevs[209];
 
-#define MAX_ABREV_FORMATTER_LEN 7
+#define MAX_ABREV_FORMATTER_LEN 5
 
 extern const uzone_packed_t utz_zone_defns[47];
 #define UTZ_ADELAIDE            &utz_zone_defns[ 31]
