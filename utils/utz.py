@@ -307,9 +307,13 @@ class TimeZoneDatabase(object):
     def pack(self, h_filename, included_aliases=None):
         whitelisted_zones = []
         for alias in included_aliases:
+            included = False
             for link in self.links:
                 if link.to == alias or link._from == alias:
+                    included = True
                     whitelisted_zones.append(link._from)
+            if not included:
+                whitelisted_zones.append(alias)
 
         whitelisted_rules = []
         zones = []

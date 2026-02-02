@@ -22,6 +22,7 @@ C_NAME = 'zones.c'
               help='Additional tz database formated files included (not from tzdata dir).', multiple=True)
 @click.option('--whitelist', '-w',
               default=os.environ.get('UTZ_WHITELIST', 'whitelist.txt'),
+              multiple=True,
               help='Zone whitelist.')
 def process(dir, region, include, whitelist):
     db = TimeZoneDatabase()
@@ -38,8 +39,8 @@ def process(dir, region, include, whitelist):
     db.strip_historical()
 
     included_zones = []
-    if whitelist:
-        with open(whitelist) as f:
+    for w in whitelist:
+        with open(w) as f:
             for zone in f:
                 included_zones.append(zone.strip())
 
