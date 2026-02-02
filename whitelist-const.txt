@@ -7,3 +7,4 @@ Asia/Bishkek
 Asia/Ashgabat
 Asia/Dushanbe
 Asia/Ulaanbaatar
+Europe/Kiev

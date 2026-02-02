@@ -58,7 +58,7 @@ const utz_rule_packed_t utz_zone_rules[55] = {
 {{ 13}, {255}, 7,  0,  1,  1, 0, 1, 10, 0}, // 	Zion	2013	max	-	Oct	lastSun	2:00	0	S
 };
 
-const char utz_zone_abrevs[359] = {
+const char utz_zone_abrevs[361] = {
 'E','E','S','T','\0',
 'W','E','%','s','T','\0',
 'W','A','T','\0',
@@ -133,7 +133,7 @@ const char utz_zone_abrevs[359] = {
 'H','S','T','\0',
 'M','H','T','\0',
 'S','S','T','\0',
-'T','O','T','\0',
+'T','O','%','s','T','\0',
 };
 
 const uzone_packed_t utz_zone_defns[84] = {
@@ -291,6 +291,7 @@ const uzone_packed_t utz_zone_defns[84] = {
 {  4,  17,   2, 298},
 // Europe/Athens	2:00	EU	EE%sT
 // Europe/Helsinki	2:00	EU	EE%sT
+// Europe/Kiev	2:00	EU	EE%sT
 {  8,  17,   2, 122},
 // Europe/Istanbul	3:00	-	TRT
 { 12,   0,   0, 304},
@@ -315,13 +316,12 @@ const uzone_packed_t utz_zone_defns[84] = {
 { 48,   0,   0, 347},
 // Pacific/Pago_Pago	-11:00	-	SST
 {-44,   0,   0, 351},
-// Pacific/Tongatapu	13:00	Tonga	TOT
+// Pacific/Tongatapu	13:00	Tonga	TO%sT
 { 52,  49,   2, 355},
 };
 
-const char utz_zone_names[1406] = {
+const char utz_zone_names[1098] = {
                                             'A','d','e','l','a','i','d','e','\0',  63, // Adelaide
-                                        'A','h','m','e','d','a','b','a','d','\0',  44, // Ahmedabad
                                                     'A','l','m','a','t','y','\0',  26, // Almaty
                                                         'A','m','m','a','n','\0',  27, // Amman
                                         'A','m','s','t','e','r','d','a','m','\0',  70, // Amsterdam
@@ -334,10 +334,8 @@ const char utz_zone_names[1406] = {
                                                     'A','z','o','r','e','s','\0',  60, // Azores
                                                 'B','a','g','h','d','a','d','\0',  29, // Baghdad
                                                             'B','a','k','u','\0',  30, // Baku
-                                        'B','a','n','g','a','l','o','r','e','\0',  44, // Bangalore
                                                 'B','a','n','g','k','o','k','\0',  31, // Bangkok
                                             'B','a','r','b','a','d','o','s','\0',   8, // Barbados
-                                        'B','a','r','c','e','l','o','n','a','\0',  70, // Barcelona
                                                 'B','e','i','j','i','n','g','\0',  50, // Beijing
                                                     'B','e','i','r','u','t','\0',  32, // Beirut
                                             'B','e','l','g','r','a','d','e','\0',  70, // Belgrade
@@ -351,16 +349,11 @@ const char utz_zone_names[1406] = {
                                             'B','r','u','s','s','e','l','s','\0',  70, // Brussels
                             'B','u','e','n','o','s',' ','A','i','r','e','s','\0',   7, // Buenos Aires
                                                         'C','a','i','r','o','\0',   0, // Cairo
-                                            'C','a','l','c','u','t','t','a','\0',  44, // Calcutta
                                     'C','a','p','e',' ','V','e','r','d','e','\0',  61, // Cape Verde
                                                 'C','a','r','a','c','a','s','\0',  10, // Caracas
                                     'C','a','s','a','b','l','a','n','c','a','\0',   1, // Casablanca
-                                        'C','h','a','n','g','z','h','o','u','\0',  50, // Changzhou
-                                                'C','h','e','n','g','d','u','\0',  50, // Chengdu
-                                                'C','h','e','n','n','a','i','\0',  44, // Chennai
                                                 'C','h','i','c','a','g','o','\0',  11, // Chicago
                                         'C','h','i','h','u','a','h','u','a','\0',  12, // Chihuahua
-                                        'C','h','o','n','g','q','i','n','g','\0',  50, // Chongqing
                                                 'C','o','l','o','m','b','o','\0',  34, // Colombo
                                     'C','o','s','t','a',' ','R','i','c','a','\0',  13, // Costa Rica
                                                     'D','a','r','w','i','n','\0',  65, // Darwin
@@ -372,29 +365,23 @@ const char utz_zone_names[1406] = {
                                                 'G','o','d','t','h','a','b','\0',  15, // Godthab
                                 'G','u','a','d','a','l','a','j','a','r','a','\0',  19, // Guadalajara
                                                             'G','u','a','m','\0',  79, // Guam
-                                        'G','u','a','n','g','z','h','o','u','\0',  50, // Guangzhou
                                                 'H','a','l','i','f','a','x','\0',  16, // Halifax
-                                                'H','a','m','b','u','r','g','\0',  70, // Hamburg
-                                            'H','a','n','g','z','h','o','u','\0',  50, // Hangzhou
                                                     'H','a','r','a','r','e','\0',   3, // Harare
-                                                    'H','a','r','b','i','n','\0',  50, // Harbin
                                             'H','e','l','s','i','n','k','i','\0',  71, // Helsinki
                                                     'H','o','b','a','r','t','\0',  66, // Hobart
                                         'H','o','n','g',' ','K','o','n','g','\0',  37, // Hong Kong
                                             'H','o','n','o','l','u','l','u','\0',  80, // Honolulu
                                                 'H','o','u','s','t','o','n','\0',  11, // Houston
-                                        'H','y','d','e','r','a','b','a','d','\0',  44, // Hyderabad
                         'I','n','l','a','n','d',' ','E','m','p','i','r','e','\0',  17, // Inland Empire
                                                 'I','r','k','u','t','s','k','\0',  38, // Irkutsk
                                             'I','s','t','a','n','b','u','l','\0',  72, // Istanbul
                                                 'J','a','k','a','r','t','a','\0',  39, // Jakarta
                                         'J','e','r','u','s','a','l','e','m','\0',  40, // Jerusalem
-                                                        'J','i','n','a','n','\0',  50, // Jinan
                                                         'K','a','b','u','l','\0',  41, // Kabul
                                 'K','a','l','i','n','i','n','g','r','a','d','\0',  73, // Kaliningrad
                                                 'K','a','r','a','c','h','i','\0',  42, // Karachi
                                             'K','a','t','m','a','n','d','u','\0',  43, // Katmandu
-                                                'K','o','l','k','a','t','a','\0',  44, // Kolkata
+                                                            'K','i','e','v','\0',  71, // Kiev
                                 'K','r','a','s','n','o','y','a','r','s','k','\0',  45, // Krasnoyarsk
                             'K','u','a','l','a',' ','L','u','m','p','u','r','\0',  46, // Kuala Lumpur
                                                     'K','u','w','a','i','t','\0',  29, // Kuwait
@@ -412,24 +399,15 @@ const char utz_zone_names[1406] = {
                                                         'M','i','n','s','k','\0',  75, // Minsk
                                     'M','o','n','t','e','v','i','d','e','o','\0',  20, // Montevideo
                                                     'M','o','s','c','o','w','\0',  75, // Moscow
-                                                    'M','u','m','b','a','i','\0',  44, // Mumbai
-                                                    'M','u','n','i','c','h','\0',  70, // Munich
-                                                    'N','a','g','o','y','a','\0',  53, // Nagoya
                                                 'N','a','i','r','o','b','i','\0',   4, // Nairobi
-                                            'N','a','n','c','h','a','n','g','\0',  50, // Nanchang
-                                                'N','a','n','j','i','n','g','\0',  50, // Nanjing
                                             'N','e','w',' ','Y','o','r','k','\0',  21, // New York
                                 'N','o','v','o','s','i','b','i','r','s','k','\0',  45, // Novosibirsk
                                                             'O','m','s','k','\0',  48, // Omsk
-                                                        'O','s','a','k','a','\0',  53, // Osaka
                                                         'P','e','r','t','h','\0',  67, // Perth
                             'P','h','i','l','a','d','e','l','p','h','i','a','\0',  21, // Philadelphia
                                                 'P','h','o','e','n','i','x','\0',  22, // Phoenix
-                                                            'P','u','n','e','\0',  44, // Pune
-                                                'Q','i','n','g','d','a','o','\0',  50, // Qingdao
                                                 'R','a','n','g','o','o','n','\0',  57, // Rangoon
                                                     'R','e','g','i','n','a','\0',  13, // Regina
-                                    'R','h','i','n','e','-','R','u','h','r','\0',  70, // Rhine-Ruhr
                     'R','i','o',' ','d','e',' ','J','a','n','e','i','r','o','\0',  24, // Rio de Janeiro
                                                             'R','o','m','e','\0',  70, // Rome
                                                     'S','a','m','a','r','a','\0',  76, // Samara
@@ -438,19 +416,12 @@ const char utz_zone_names[1406] = {
                                         'S','a','o',' ','P','a','u','l','o','\0',  24, // Sao Paulo
                                             'S','a','r','a','j','e','v','o','\0',  70, // Sarajevo
                                                         'S','e','o','u','l','\0',  49, // Seoul
-                                            'S','h','a','n','g','h','a','i','\0',  50, // Shanghai
-                                                'S','h','a','n','t','o','u','\0',  50, // Shantou
-                                            'S','h','e','n','y','a','n','g','\0',  50, // Shenyang
-                                            'S','h','e','n','z','h','e','n','\0',  50, // Shenzhen
                         'S','o','u','t','h',' ','G','e','o','r','g','i','a','\0',  62, // South Georgia
                                             'S','t',' ','J','o','h','n','s','\0',  25, // St Johns
-                                        'S','t','u','t','t','g','a','r','t','\0',  70, // Stuttgart
-                                                        'S','u','r','a','t','\0',  44, // Surat
                                                     'S','y','d','n','e','y','\0',  68, // Sydney
                                                     'T','a','i','p','e','i','\0',  50, // Taipei
                                                 'T','b','i','l','i','s','i','\0',  51, // Tbilisi
                                                     'T','e','h','r','a','n','\0',  52, // Tehran
-                                                'T','i','a','n','j','i','n','\0',  50, // Tianjin
                                                 'T','i','j','u','a','n','a','\0',  17, // Tijuana
                                                         'T','o','k','y','o','\0',  53, // Tokyo
                                         'T','o','n','g','a','t','a','p','u','\0',  83, // Tongatapu
@@ -458,10 +429,7 @@ const char utz_zone_names[1406] = {
                                         'U','n','i','v','e','r','s','a','l','\0',  69, // Universal
                                 'V','l','a','d','i','v','o','s','t','o','k','\0',  55, // Vladivostok
             'W','a','s','h','i','n','g','t','o','n',',',' ','D','.','C','.','\0',  21, // Washington, D.C.
-                                                'W','e','n','z','h','o','u','\0',  50, // Wenzhou
                                             'W','i','n','d','h','o','e','k','\0',   5, // Windhoek
-                                                        'W','u','h','a','n','\0',  50, // Wuhan
-                                                       'X','i','\'','a','n','\0',  50, // Xi'an
                                                 'Y','a','k','u','t','s','k','\0',  56, // Yakutsk
                         'Y','e','k','a','t','e','r','i','n','b','u','r','g','\0',  58, // Yekaterinburg
                                                 'Y','e','r','e','v','a','n','\0',  59, // Yerevan
