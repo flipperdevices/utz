@@ -15,7 +15,7 @@ export UTZ_INCLUDES:=$(UTZ_INCLUDES)
 all: zones.h zones.c
 
 zones.h: $(UTZ_DATA_DIR) $(UTZ_INCLUDES) $(UTZ_WHITELIST) utils/generate_zones.py utils/utz.py
-	./utils/generate_zones.py
+	./utils/generate_zones.py -d vendor/tzdata -w $(UTZ_WHITELIST) -w whitelist-const.txt -b blacklist-const.txt -i majormetros
 zones.c: zones.h
 
 whitelist.txt: vendor/android/timezones.xml majormetros utils/compile_whitelist.py 

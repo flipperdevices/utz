@@ -1,0 +1,9 @@
+Europe/Kaliningrad
+Europe/Samara
+Asia/Omsk
+Asia/Novosibirsk
+Asia/Petropavlovsk-Kamchatsky
+Asia/Bishkek
+Asia/Ashgabat
+Asia/Dushanbe
+Asia/Ulaanbaatar
