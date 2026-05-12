@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-extern const utz_rule_packed_t utz_zone_rules[55];
-extern const char utz_zone_abrevs[361];
+extern const utz_rule_packed_t utz_zone_rules[57];
+extern const char utz_zone_abrevs[360];
 
 #define MAX_ABREV_FORMATTER_LEN 6
 
@@ -69,10 +69,10 @@ extern const uzone_packed_t utz_zone_defns[84];
 #define UTZ_KALININGRAD         &utz_zone_defns[ 73]
 #define UTZ_KARACHI             &utz_zone_defns[ 42]
 #define UTZ_KATMANDU            &utz_zone_defns[ 43]
-#define UTZ_KIEV                &utz_zone_defns[ 71]
 #define UTZ_KRASNOYARSK         &utz_zone_defns[ 45]
 #define UTZ_KUALA_LUMPUR        &utz_zone_defns[ 46]
 #define UTZ_KUWAIT              &utz_zone_defns[ 29]
+#define UTZ_KYIV                &utz_zone_defns[ 71]
 #define UTZ_LAHORE              &utz_zone_defns[ 42]
 #define UTZ_LONDON              &utz_zone_defns[ 74]
 #define UTZ_LOS_ANGELES         &utz_zone_defns[ 17]

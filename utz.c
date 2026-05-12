@@ -281,7 +281,7 @@ utz_datetime_t utz_udatetime_sub(const utz_datetime_t* dt, const utz_offset_t *o
 }
 
 static void unpack_rule(const utz_rule_packed_t* rule_in, utz_short_year_t cur_year, utz_rule_t* rule_out) {
-  static const char * const letter_lut[3] = {"", "S", "D"};
+  static const char * const letter_lut[5] = {"", "S", "D", "GMT", "BST"};
 
   utz_dayofweek_t dayofweek_of_first_dayofmonth;
   utz_dayofweek_t first_dayofweek;

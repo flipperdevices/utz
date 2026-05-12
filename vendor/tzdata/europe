@@ -468,7 +468,7 @@ Zone	Europe/London	-0:01:15 -	LMT	1847 Dec  1  0:00s
 			 0:00	GB-Eire	%s	1968 Oct 27
 			 1:00	-	BST	1971 Oct 31  2:00u
 			 0:00	GB-Eire	%s	1996
-			 0:00	EU	GMT
+			 0:00	UK	%s
 Link	Europe/London	Europe/Jersey
 Link	Europe/London	Europe/Guernsey
 Link	Europe/London	Europe/Isle_of_Man
@@ -506,6 +506,9 @@ Rule	EU	1996	max	-	Oct	lastSun	 1:00u	0	-
 # Directive 2000/84/EC of the European Parliament and of the Council
 # of 19 January 2001 on summer-time arrangements.
 # http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=CELEX:32000L0084:EN:NOT
+
+Rule    UK  1981    max -   Mar lastSun  1:00u  1:00    BST
+Rule    UK  1996    max -   Oct lastSun  1:00u  0   GMT
 
 # W-Eur differs from EU only in that W-Eur uses standard time.
 Rule	W-Eur	1977	1980	-	Apr	Sun>=1	 1:00s	1:00	S
@@ -3680,7 +3683,7 @@ Link	Europe/Istanbul	Asia/Istanbul	# Istanbul is in both continents.
 # Most of Ukraine since 1970 has been like Kiev.
 # "Kyiv" is the transliteration of the Ukrainian name, but
 # "Kiev" is more common in English.
-Zone Europe/Kiev	2:02:04 -	LMT	1880
+Zone Europe/Kyiv	2:02:04 -	LMT	1880
 			2:02:04	-	KMT	1924 May  2 # Kiev Mean Time
 			2:00	-	EET	1930 Jun 21
 			3:00	-	MSK	1941 Sep 20

@@ -157,6 +157,10 @@ class Rule(Entry):
             l = 1
         elif self.letter == 'D':
             l = 2
+        elif self.letter == 'GMT':
+            l = 3
+        elif self.letter == 'BST':
+            l = 4
 
         # see utz.h for struct definitions
         return "{{%3d}, {%3d}, %d, %2d, %2d, %2d, %d, %d, %2d, %d}, // %s" % (
