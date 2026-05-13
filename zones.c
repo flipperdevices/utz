@@ -1,6 +1,6 @@
 #include "utz.h"
 
-const utz_rule_packed_t utz_zone_rules[55] = {
+const utz_rule_packed_t utz_zone_rules[57] = {
 {{  8}, {255}, 7,  1,  1,  2, 0, 1,  4, 0}, // 	AN	2008	max	-	Apr	Sun>=1	2:00s	0	S
 {{  8}, {255}, 7,  1,  1,  2, 0, 2, 10, 1}, // 	AN	2008	max	-	Oct	Sun>=1	2:00s	1:00	D
 {{  8}, {255}, 7,  1,  1,  2, 0, 1,  4, 0}, // 	AS	2008	max	-	Apr	Sun>=1	2:00s	0	S
@@ -52,13 +52,15 @@ const utz_rule_packed_t utz_zone_rules[55] = {
 {{  0}, {255}, 7,  1,  1,  2, 0, 1,  9, 1}, // 	Namibia	1994	max	-	Sep	Sun>=1	2:00	1:00	S
 {{ 17}, {255}, 7, 15,  1,  2, 0, 0,  1, 0}, // 	Tonga	2017	max	-	Jan	Sun>=15	3:00	0	-
 {{ 16}, {255}, 7,  1,  1,  2, 0, 1, 11, 1}, // 	Tonga	2016	max	-	Nov	Sun>=1	2:00	1:00	S
+{{  0}, {255}, 7,  0,  0,  1, 0, 4,  3, 1}, //     UK  1981    max -   Mar lastSun  1:00u  1:00    BST
+{{  0}, {255}, 7,  0,  0,  1, 0, 3, 10, 0}, //     UK  1996    max -   Oct lastSun  1:00u  0   GMT
 {{  7}, {255}, 7,  8,  1,  2, 0, 2,  3, 1}, // 	US	2007	max	-	Mar	Sun>=8	2:00	1:00	D
 {{  7}, {255}, 7,  1,  1,  1, 0, 1, 11, 0}, // 	US	2007	max	-	Nov	Sun>=1	2:00	0	S
 {{ 13}, {255}, 5, 23,  1,  2, 0, 2,  3, 1}, // 	Zion	2013	max	-	Mar	Fri>=23	2:00	1:00	D
 {{ 13}, {255}, 7,  0,  1,  1, 0, 1, 10, 0}, // 	Zion	2013	max	-	Oct	lastSun	2:00	0	S
 };
 
-const char utz_zone_abrevs[361] = {
+const char utz_zone_abrevs[360] = {
 'E','E','S','T','\0',
 'W','E','%','s','T','\0',
 'W','A','T','\0',
@@ -124,7 +126,7 @@ const char utz_zone_abrevs[361] = {
 'C','E','%','s','T','\0',
 'T','R','T','\0',
 'K','A','L','T','\0',
-'G','M','T','\0',
+'%','s','\0',
 'M','S','K','\0',
 'S','A','M','T','\0',
 'N','Z','%','s','T','\0',
@@ -150,7 +152,7 @@ const uzone_packed_t utz_zone_defns[84] = {
 // Africa/Windhoek	1:00	Namibia	WA%sT
 {  4,  47,   2,  23},
 // America/Anchorage	-9:00	US	AK%sT
-{-36,  51,   2,  29},
+{-36,  53,   2,  29},
 // America/Argentina/Buenos_Aires	-3:00	Arg	AR%sT
 {-12,   0,   0,  35},
 // America/Barbados	-4:00	Barb	A%sT
@@ -160,21 +162,21 @@ const uzone_packed_t utz_zone_defns[84] = {
 // America/Caracas	-4:00	-	VET
 {-16,   0,   0,  49},
 // America/Chicago	-6:00	US	C%sT
-{-24,  51,   2,  53},
+{-24,  53,   2,  53},
 // America/Chihuahua	-7:00	Mexico	M%sT
 {-28,  37,   2,  58},
 // America/Costa_Rica	-6:00	CR	C%sT
 // America/Regina	-6:00	-	CST
 {-24,   0,   0,  63},
 // America/Denver	-7:00	US	M%sT
-{-28,  51,   2,  58},
+{-28,  53,   2,  58},
 // America/Godthab	-3:00	EU	WG%sT
 {-12,  17,   2,  67},
 // America/Halifax	-4:00	Canada	A%sT
 {-16,  13,   2,  73},
 // America/Los_Angeles	-8:00	US	P%sT
 // America/Tijuana	-8:00	US	P%sT
-{-32,  51,   2,  78},
+{-32,  53,   2,  78},
 // America/Manaus	-4:00	-	AMT
 {-16,   0,   0,  83},
 // America/Mexico_City	-6:00	Mexico	C%sT
@@ -182,7 +184,7 @@ const uzone_packed_t utz_zone_defns[84] = {
 // America/Montevideo	-3:00	Uruguay	UY%sT
 {-12,   0,   0,  87},
 // America/New_York	-5:00	US	E%sT
-{-20,  51,   2,  92},
+{-20,  53,   2,  92},
 // America/Phoenix	-7:00	-	MST
 {-28,   0,   0,  97},
 // America/Santiago	-4:00	Chile	CL%sT
@@ -221,7 +223,7 @@ const uzone_packed_t utz_zone_defns[84] = {
 // Asia/Jakarta	7:00	-	WIB
 { 28,   0,   0, 167},
 // Asia/Jerusalem	2:00	Zion	I%sT
-{  8,  53,   2, 171},
+{  8,  55,   2, 171},
 // Asia/Kabul	4:30	-	AFT
 { 18,   0,   0, 176},
 // Asia/Karachi	5:00	Pakistan	PK%sT
@@ -291,33 +293,33 @@ const uzone_packed_t utz_zone_defns[84] = {
 {  4,  17,   2, 298},
 // Europe/Athens	2:00	EU	EE%sT
 // Europe/Helsinki	2:00	EU	EE%sT
-// Europe/Kiev	2:00	EU	EE%sT
+// Europe/Kyiv	2:00	EU	EE%sT
 {  8,  17,   2, 122},
 // Europe/Istanbul	3:00	-	TRT
 { 12,   0,   0, 304},
 // Europe/Kaliningrad	2:00	-	KALT
 {  8,   0,   0, 308},
-// Europe/London	0:00	EU	GMT
-{  0,  17,   2, 313},
+// Europe/London	0:00	UK	%s
+{  0,  51,   2, 313},
 // Europe/Minsk	3:00	-	MSK
 // Europe/Moscow	3:00	-	MSK
-{ 12,   0,   0, 317},
+{ 12,   0,   0, 316},
 // Europe/Samara	4:00	-	SAMT
-{ 16,   0,   0, 321},
+{ 16,   0,   0, 320},
 // Pacific/Auckland	12:00	NZ	NZ%sT
-{ 48,  45,   2, 326},
+{ 48,  45,   2, 325},
 // Pacific/Fiji	12:00	Fiji	FJ%sT
-{ 48,  19,   2, 332},
+{ 48,  19,   2, 331},
 // Pacific/Guam	10:00	-	ChST
-{ 40,   0,   0, 338},
+{ 40,   0,   0, 337},
 // Pacific/Honolulu	-10:00	-	HST
-{-40,   0,   0, 343},
+{-40,   0,   0, 342},
 // Pacific/Majuro	12:00	-	MHT
-{ 48,   0,   0, 347},
+{ 48,   0,   0, 346},
 // Pacific/Pago_Pago	-11:00	-	SST
-{-44,   0,   0, 351},
+{-44,   0,   0, 350},
 // Pacific/Tongatapu	13:00	Tonga	TO%sT
-{ 52,  49,   2, 355},
+{ 52,  49,   2, 354},
 };
 
 const char utz_zone_names[1098] = {
@@ -381,10 +383,10 @@ const char utz_zone_names[1098] = {
                                 'K','a','l','i','n','i','n','g','r','a','d','\0',  73, // Kaliningrad
                                                 'K','a','r','a','c','h','i','\0',  42, // Karachi
                                             'K','a','t','m','a','n','d','u','\0',  43, // Katmandu
-                                                            'K','i','e','v','\0',  71, // Kiev
                                 'K','r','a','s','n','o','y','a','r','s','k','\0',  45, // Krasnoyarsk
                             'K','u','a','l','a',' ','L','u','m','p','u','r','\0',  46, // Kuala Lumpur
                                                     'K','u','w','a','i','t','\0',  29, // Kuwait
+                                                            'K','y','i','v','\0',  71, // Kyiv
                                                     'L','a','h','o','r','e','\0',  42, // Lahore
                                                     'L','o','n','d','o','n','\0',  74, // London
                                 'L','o','s',' ','A','n','g','e','l','e','s','\0',  17, // Los Angeles

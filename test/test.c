@@ -147,6 +147,62 @@ static void test_berlin(void) {
 	TEST(offset.minutes == 0);
 }
 
+static void test_london(void) {
+	utz_zone_t zone;
+
+	// Look up by name
+	TEST(utz_get_zone_by_name("London", &zone));
+	TEST(strcmp(zone.name, "London") == 0);
+	TEST(zone.rules_len == 2);
+	TEST(strcmp(zone.abrev_formatter, "%s") == 0);
+
+	// Winter time
+	utz_datetime_t dt = {
+		.date = utz_date_init(2026, 1, 22),
+		.time = {
+			.hour = 12,
+			.minute = 22,
+			.second = 19
+		}
+	};
+	utz_offset_t offset;
+	const char *s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "GMT") == 0);
+	TEST(offset.hours == 0);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right before switching to summer time
+	dt.date = utz_date_init(2026, 3, 29);
+	dt.time.hour = 0;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "GMT") == 0);
+	TEST(offset.hours == 0);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right after switching from winter time
+	dt.date = utz_date_init(2026, 3, 29);
+	dt.time.hour = 1;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "BST") == 0);
+	TEST(offset.hours == 1);
+	TEST(offset.minutes == 0);
+
+	// Summer time, right before switching to winter time
+	dt.date = utz_date_init(2026, 10, 25);
+	dt.time.hour = 0;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "BST") == 0);
+	TEST(offset.hours == 1);
+	TEST(offset.minutes == 0);
+
+	// Winter time, right after switching from summer time
+	dt.time.hour = 1;
+	s = utz_get_current_offset(&zone, &dt, &offset);
+	TEST(strcmp(s, "GMT") == 0);
+	TEST(offset.hours == 0);
+	TEST(offset.minutes == 0);
+}
+
 static void test_st_johns(void) {
 	// Timezone with negative fractional offset
 	utz_zone_t zone;
@@ -562,5 +618,6 @@ int main(void) {
 	test_init_offset();
 	test_neg_offset();
 	test_offset_cmp();
+	test_london();
 	return 0;
 }

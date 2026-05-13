@@ -141,7 +141,7 @@ typedef struct utz_rule_packed_t {
   uint8_t at_is_local_time:1;
   uint8_t at_hours:5;
   uint8_t at_inc_minutes:2;
-  uint8_t letter:2;
+  uint8_t letter:3;
   uint8_t in_month:4;
   uint8_t offset_hours:2;
 } utz_rule_packed_t;
