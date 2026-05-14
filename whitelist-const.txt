@@ -8,3 +8,5 @@ Asia/Ashgabat
 Asia/Dushanbe
 Asia/Ulaanbaatar
 Europe/Kyiv
+America/Adak
+Pacific/Gambier
